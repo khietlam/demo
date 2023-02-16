@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "988287623865",
+    "project_id": "sga-2609",
+    "storage_bucket": "sga-2609.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988287623865:android:babd74456eb0030c687168",
+        "android_client_info": {
+          "package_name": "ai.sga.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "988287623865-2m7kmnfkfdp3iqt4ldqj6midtc5v05vf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkHn6p-nr4isFicjGPBT_Oh05Vsh6KDMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "988287623865-2m7kmnfkfdp3iqt4ldqj6midtc5v05vf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "988287623865-s9r84akogi8a8kmkrq76ejoa1klf7qlt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ai.sga.demo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
