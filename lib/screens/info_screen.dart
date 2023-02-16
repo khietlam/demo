@@ -120,7 +120,7 @@ class _InfoScreenState extends State<InfoScreen> {
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
           child: Scaffold(
             appBar: AppBar(
-              backgroundColor: HexColor('#B28B4B').withOpacity(0.9),
+              backgroundColor: HexColor('#B28B4B').withOpacity(0.9), //aaa
               leading: Container(),
               actions: [
                 IconButton(
