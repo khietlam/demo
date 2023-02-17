@@ -354,43 +354,57 @@ class _SignInScreenState extends State<SignInScreen> {
                               if (_isOffline) {
                                 _showErrorNetwork();
                               } else {
-                                AccountInfo? user = await AuthenticationService
-                                    .signInUsingEmailPassword(
-                                  email: _account.username,
-                                  password: _account.password,
-                                );
+                                try {
+                                  _account = (await AuthenticationService
+                                      .signInUsingEmailPassword(
+                                    email: _account.username,
+                                    password: _account.password,
+                                  ))!;
 
-                                print(user);
+                                  // print(_account.user);
 
-                                if (user!.message != null) {
-                                  switch (user.message) {
-                                    case 'user-not-found':
-                                      setState(() {
-                                        _showSpinner = false;
-                                        _showErrorMessage('User not found!');
+                                  if (_account.message != null) {
+                                    switch (_account.message) {
+                                      case 'user-not-found':
+                                        setState(() {
+                                          _showSpinner = false;
+                                          _showErrorMessage('User not found!');
+                                        });
+                                        break;
+                                      case 'wrong-password':
+                                        setState(() {
+                                          _showSpinner = false;
+                                          _showErrorMessage('Wrong password!');
+                                        });
+
+                                        break;
+                                    }
+                                  } else if (_account.user!.uid != null) {
+                                    setState(() {
+                                      _showSpinner = false;
+                                      Future.delayed(const Duration(seconds: 0))
+                                          .then((value) {
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (context) => Home(
+                                              account: _account,
+                                            ),
+                                          ),
+                                        );
                                       });
-                                      break;
-                                    case 'wrong-password':
-                                      setState(() {
-                                        _showSpinner = false;
-                                        _showErrorMessage('Wrong password!');
-                                      });
-
-                                      break;
+                                    });
                                   }
-                                } else {
+                                } on FirebaseAuthException catch (e) {
+                                  // print(e.message);
+                                  _showErrorMessage(e.message!);
                                   setState(() {
                                     _showSpinner = false;
-                                    Future.delayed(const Duration(seconds: 0))
-                                        .then((value) {
-                                      Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                          builder: (context) => Home(
-                                            account: _account,
-                                          ),
-                                        ),
-                                      );
-                                    });
+                                  });
+                                  throw e;
+                                } on Error catch (e) {
+                                  print(e);
+                                  setState(() {
+                                    _showSpinner = false;
                                   });
                                 }
                               }
@@ -474,16 +488,20 @@ class _SignInScreenState extends State<SignInScreen> {
     try {
       final GoogleSignInAccount? googleSignInAccount =
           await _googleSignIn.signIn();
+
       final GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount!.authentication;
+
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
+
       await _auth.signInWithCredential(credential).then((value) {
         // print(value.user);
         if (value.user!.email != null) {
           _account.user = value.user;
+          _account.googleSignIn = _googleSignIn;
           setState(() {
             _showSpinner = false;
             Future.delayed(const Duration(seconds: 0)).then((value) {
@@ -501,7 +519,15 @@ class _SignInScreenState extends State<SignInScreen> {
     } on FirebaseAuthException catch (e) {
       // print(e.message);
       _showErrorMessage(e.message!);
+      setState(() {
+        _showSpinner = false;
+      });
       throw e;
+    } on Error catch (e) {
+      print(e);
+      setState(() {
+        _showSpinner = false;
+      });
     }
   }
 

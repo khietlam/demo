@@ -82,6 +82,7 @@ class AuthenticationService {
     try {
       user!.updatePassword(newPass).then((_) {
         print("Successfully changed password");
+        account.message = 'Successfully changed password';
       }).catchError((error) {
         print("Password can't be changed - $error");
         //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.

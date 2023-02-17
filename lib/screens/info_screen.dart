@@ -68,6 +68,8 @@ class _InfoScreenState extends State<InfoScreen> {
   void initState() {
     super.initState();
     _account = widget.account!;
+    print(_account.user);
+    print(_account.googleSignIn);
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -97,7 +99,21 @@ class _InfoScreenState extends State<InfoScreen> {
 
   Future<void> signOutFromGoogle() async {
     await _googleSignIn.signOut();
-    await _auth.signOut();
+    print('xong GG');
+  }
+
+  void _showErrorMessage(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_LONG,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 2,
+      webPosition: "center",
+      webBgColor: "linear-gradient(to right, #ff7f00, #ff7f00)",
+      webShowClose: true,
+    );
   }
 
   @override
@@ -128,15 +144,37 @@ class _InfoScreenState extends State<InfoScreen> {
                     setState(() {
                       _showSpinner = true;
                     });
-                    await FirebaseAuth.instance.signOut();
-                    await signOutFromGoogle();
-                    _showSuccess();
 
-                    Future.delayed(const Duration(seconds: 0)).then((value) {
-                      _showSpinner = false;
-                      Navigator.pushReplacement(
-                          context, FadeRoute(page: WelcomeScreen()));
-                    });
+                    try {
+                      if (_account.user!.uid != null) {
+                        FirebaseAuth.instance.signOut();
+                        print('xong Firebase');
+                      }
+
+                      if (_account.googleSignIn != null) {
+                        signOutFromGoogle();
+                      }
+
+                      _showSuccess();
+
+                      Future.delayed(const Duration(seconds: 2)).then((value) {
+                        _showSpinner = false;
+                        Navigator.pushReplacement(
+                            context, FadeRoute(page: WelcomeScreen()));
+                      });
+                    } on FirebaseAuthException catch (e) {
+                      // print(e.message);
+                      _showErrorMessage(e.message!);
+                      setState(() {
+                        _showSpinner = false;
+                      });
+                      throw e;
+                    } on Error catch (e) {
+                      print(e);
+                      setState(() {
+                        _showSpinner = false;
+                      });
+                    }
                   },
                   icon: const Icon(Icons.exit_to_app_rounded),
                 )

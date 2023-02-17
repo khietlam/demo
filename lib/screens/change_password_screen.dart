@@ -45,8 +45,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   late FocusNode focusPassword, focusButton;
 
   bool _isProcessing = false;
-  bool showSpinner = false;
-  bool isOffline = false;
+  bool _showSpinner = false;
+  bool _isOffline = false;
   late Image imageMobile;
   late Image imageIpad;
 
@@ -56,7 +56,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         'newPassword': ['', Validators.required, Validators.minLength(6)],
       });
 
-  void showErrorNetwork() {
+  void _showErrorNetwork() {
     Fluttertoast.showToast(
       msg: "errors.error_network",
       toastLength: Toast.LENGTH_SHORT,
@@ -89,6 +89,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     // TODO: implement initState
     super.initState();
     _account = widget.account!;
+    print(_account.user);
+
     focusPassword = FocusNode();
     focusButton = FocusNode();
     imageMobile = Image.asset("assets/images/background@3x.png");
@@ -124,6 +126,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     );
   }
 
+  void _showErrorMessage(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_LONG,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 2,
+      webPosition: "center",
+      webBgColor: "linear-gradient(to right, #ff7f00, #ff7f00)",
+      webShowClose: true,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceType = 1.sh / 1.sw > 1.43 ? 'mobile' : 'tablet';
@@ -135,10 +151,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         Widget child,
       ) {
         final bool connected = connectivity != ConnectivityResult.none;
-        isOffline = !connected;
+        _isOffline = !connected;
         // debugPrint(isOffline);
         if (!connected) {
-          showErrorNetwork();
+          _showErrorNetwork();
         }
         return child;
       },
@@ -149,7 +165,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           child: Scaffold(
             resizeToAvoidBottomInset: false,
             body: ModalProgressHUD(
-              inAsyncCall: showSpinner,
+              inAsyncCall: _showSpinner,
               progressIndicator: const CircularProgressIndicator(
                 color: Colors.green,
                 strokeWidth: 2.0,
@@ -289,55 +305,58 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
                             if (form.valid) {
                               setState(() {
-                                showSpinner = true;
+                                _showSpinner = true;
                               });
                               // print(form.value);
                               Map<String, dynamic> formOut = form.value;
                               _account.newPassword =
                                   formOut['newPassword'].replaceAll(' ', '');
 
-                              if (isOffline) {
-                                showErrorNetwork();
+                              print(_account.newPassword);
+                              if (_isOffline) {
+                                _showErrorNetwork();
                               } else {
-                                AccountInfo? user =
-                                    await AuthenticationService.changePassword(
-                                  newPass: _account.newPassword,
-                                );
+                                try {
+                                  User? user =
+                                      FirebaseAuth.instance.currentUser;
+                                  print(user);
 
-                                print(user);
-                                if (user!.message != null) {
-                                  switch (user.message) {
-                                    case 'user-not-found':
-                                      setState(() {
-                                        showSpinner = false;
-                                        showErrorMessage('User not found!');
-                                      });
-                                      break;
-                                    case 'wrong-password':
-                                      setState(() {
-                                        showSpinner = false;
-                                        showErrorMessage('Wrong password!');
-                                      });
-
-                                      break;
-                                  }
-                                } else {
-                                  setState(() {
-                                    showSpinner = false;
-                                    _showSuccess();
-                                    Future.delayed(const Duration(seconds: 0))
-                                        .then((value) {
-                                      Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                          builder: (context) => Home(
-                                            image: widget.image,
-                                            classifier: widget.classifier,
-                                            account: _account,
-                                            modelIndex: widget.modelIndex,
+                                  user!
+                                      .updatePassword(_account.newPassword)
+                                      .then((_) {
+                                    setState(() {
+                                      _showSpinner = false;
+                                      _showSuccess();
+                                      Future.delayed(const Duration(seconds: 1))
+                                          .then((value) {
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (context) => Home(
+                                              pageIndex: 1,
+                                              image: widget.image,
+                                              classifier: widget.classifier,
+                                              account: _account,
+                                              modelIndex: widget.modelIndex,
+                                            ),
                                           ),
-                                        ),
-                                      );
+                                        );
+                                      });
                                     });
+                                  }).catchError((error) {
+                                    print("Password can't be changed - $error");
+                                    //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
+                                  });
+                                } on FirebaseAuthException catch (e) {
+                                  // print(e.message);
+                                  _showErrorMessage(e.message!);
+                                  setState(() {
+                                    _showSpinner = false;
+                                  });
+                                  throw e;
+                                } on Error catch (e) {
+                                  print(e);
+                                  setState(() {
+                                    _showSpinner = false;
                                   });
                                 }
                               }

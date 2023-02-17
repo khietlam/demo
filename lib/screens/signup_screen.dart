@@ -354,44 +354,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               if (_isOffline) {
                                 _showErrorNetwork();
                               } else {
-                                AccountInfo? user = await AuthenticationService
-                                    .signUpUsingEmailPassword(
-                                  email: _account.username,
-                                  password: _account.password,
-                                );
+                                try {
+                                  _account = (await AuthenticationService
+                                      .signUpUsingEmailPassword(
+                                    email: _account.username,
+                                    password: _account.password,
+                                  ))!;
 
-                                print(user);
-                                if (user!.message != null) {
-                                  switch (user.message) {
-                                    case 'weak-password':
-                                      setState(() {
-                                        _showSpinner = false;
-                                        _showErrorMessage(
-                                            'The password provided is too weak!');
-                                      });
-                                      break;
-                                    case 'email-already-in-use':
-                                      setState(() {
-                                        _showSpinner = false;
-                                        _showErrorMessage(
-                                            'The account already exists for that email!');
-                                      });
+                                  // print(_account.user);
+                                  if (_account.message != null) {
+                                    switch (_account.message) {
+                                      case 'weak-password':
+                                        setState(() {
+                                          _showSpinner = false;
+                                          _showErrorMessage(
+                                              'The password provided is too weak!');
+                                        });
+                                        break;
+                                      case 'email-already-in-use':
+                                        setState(() {
+                                          _showSpinner = false;
+                                          _showErrorMessage(
+                                              'The account already exists for that email!');
+                                        });
 
-                                      break;
+                                        break;
+                                    }
+                                  } else if (_account.user!.uid != null) {
+                                    setState(() {
+                                      _showSpinner = false;
+                                      Future.delayed(const Duration(seconds: 0))
+                                          .then((value) {
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (context) => Home(
+                                              account: _account,
+                                            ),
+                                          ),
+                                        );
+                                      });
+                                    });
                                   }
-                                } else {
+                                } on FirebaseAuthException catch (e) {
+                                  // print(e.message);
+                                  _showErrorMessage(e.message!);
                                   setState(() {
                                     _showSpinner = false;
-                                    Future.delayed(const Duration(seconds: 0))
-                                        .then((value) {
-                                      Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                          builder: (context) => Home(
-                                            account: _account,
-                                          ),
-                                        ),
-                                      );
-                                    });
+                                  });
+                                  throw e;
+                                } on Error catch (e) {
+                                  print(e);
+                                  setState(() {
+                                    _showSpinner = false;
                                   });
                                 }
                               }
@@ -475,16 +489,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     try {
       final GoogleSignInAccount? googleSignInAccount =
           await _googleSignIn.signIn();
+
       final GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount!.authentication;
+
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
+
       await _auth.signInWithCredential(credential).then((value) {
         print(value.user);
         if (value.user!.email != null) {
           _account.user = value.user;
+          _account.googleSignIn = _googleSignIn;
           setState(() {
             _showSpinner = false;
             Future.delayed(const Duration(seconds: 0)).then((value) {
@@ -502,7 +520,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } on FirebaseAuthException catch (e) {
       // print(e.message);
       _showErrorMessage(e.message!);
+      setState(() {
+        _showSpinner = false;
+      });
       throw e;
+    } on Error catch (e) {
+      print(e);
+      setState(() {
+        _showSpinner = false;
+      });
     }
   }
 }

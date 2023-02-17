@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../tflite/custom_classifier.dart';
 
@@ -27,6 +28,7 @@ class AccountInfo {
   File? image;
   Classifier? classifier;
   int? modelIndex;
+  GoogleSignIn? googleSignIn;
 
   AccountInfo({
     this.username,
@@ -47,6 +49,11 @@ class AccountInfo {
     this.device_token,
     this.uid,
     this.user,
+    this.title,
+    this.image,
+    this.classifier,
+    this.modelIndex,
+    this.googleSignIn,
   });
 
   factory AccountInfo.fromMap(Map<String, dynamic> map) => AccountInfo(
