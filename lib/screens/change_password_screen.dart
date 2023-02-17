@@ -150,8 +150,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             resizeToAvoidBottomInset: false,
             body: ModalProgressHUD(
               inAsyncCall: showSpinner,
-              progressIndicator: CircularProgressIndicator(
-                color: Colors.green.withOpacity(0.6),
+              progressIndicator: const CircularProgressIndicator(
+                color: Colors.green,
                 strokeWidth: 2.0,
               ),
               child: Container(
@@ -281,7 +281,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         ),
                         Button(
                           focus: focusButton,
-                          buttonName: 'Update Password',
+                          buttonName: 'Update',
                           minHeight: 0.06.sh,
                           minWidth: 0.18.sh,
                           onTap: () async {

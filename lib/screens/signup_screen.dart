@@ -133,8 +133,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             resizeToAvoidBottomInset: false,
             body: ModalProgressHUD(
               inAsyncCall: _showSpinner,
-              progressIndicator: CircularProgressIndicator(
-                color: Colors.green.withOpacity(0.6),
+              progressIndicator: const CircularProgressIndicator(
+                color: Colors.green,
                 strokeWidth: 2.0,
               ),
               child: Container(
@@ -412,7 +412,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         Column(
                           children: <Widget>[
-                            Text('- or sign in with -',
+                            Text('- or sign up with -',
                                 style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: ScreenUtil().setSp(49.0),

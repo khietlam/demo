@@ -133,8 +133,8 @@ class _SignInScreenState extends State<SignInScreen> {
             resizeToAvoidBottomInset: false,
             body: ModalProgressHUD(
               inAsyncCall: _showSpinner,
-              progressIndicator: CircularProgressIndicator(
-                color: Colors.green.withOpacity(0.6),
+              progressIndicator: const CircularProgressIndicator(
+                color: Colors.green,
                 strokeWidth: 2.0,
               ),
               child: Container(

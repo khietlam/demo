@@ -141,7 +141,7 @@ class _InfoScreenState extends State<InfoScreen> {
                   icon: const Icon(Icons.exit_to_app_rounded),
                 )
               ],
-              title: Text('Info'),
+              title: const Text('Info'),
             ),
             resizeToAvoidBottomInset: false,
             body: ModalProgressHUD(
@@ -163,7 +163,7 @@ class _InfoScreenState extends State<InfoScreen> {
                           icon: Icons.password_outlined,
                           title: 'Change Password',
                           iconSize: ScreenUtil().setHeight(70.0),
-                          fontSize: deviceType == 'mobile' ? 48.sp : 38.sp,
+                          fontSize: deviceType == 'mobile' ? 48.sp : 32.sp,
                           letterSpacing: deviceType == 'mobile' ? 6.sp : 3.sp,
                           onTap: () {
                             Future.delayed(const Duration(seconds: 0))
@@ -189,7 +189,7 @@ class _InfoScreenState extends State<InfoScreen> {
                           icon: Icons.info_outline,
                           title: 'About Us',
                           iconSize: ScreenUtil().setHeight(70.0),
-                          fontSize: deviceType == 'mobile' ? 48.sp : 38.sp,
+                          fontSize: deviceType == 'mobile' ? 48.sp : 32.sp,
                           letterSpacing: deviceType == 'mobile' ? 6.sp : 3.sp,
                           onTap: () {
                             Future.delayed(const Duration(seconds: 0))
@@ -209,7 +209,7 @@ class _InfoScreenState extends State<InfoScreen> {
                           icon: Icons.phone,
                           title: 'Contact Us',
                           iconSize: ScreenUtil().setHeight(70.0),
-                          fontSize: deviceType == 'mobile' ? 48.sp : 38.sp,
+                          fontSize: deviceType == 'mobile' ? 48.sp : 32.sp,
                           letterSpacing: deviceType == 'mobile' ? 6.sp : 3.sp,
                           onTap: () {
                             Future.delayed(const Duration(seconds: 0))

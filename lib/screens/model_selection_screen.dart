@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../components/custom_icons_icons.dart';
 import '../components/custom_route.dart';
 import '../components/utils.dart';
 import '../data/model_and_label.dart';
@@ -100,7 +101,8 @@ class _ModelSelectionScreenState extends State<ModelSelectionScreen> {
       child: Stack(
         children: [
           Card(
-            color: checked ? Colors.orange.withOpacity(0.6) : Colors.white,
+            color:
+                checked ? HexColor('#B28B4B').withOpacity(0.9) : Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(4),
             ),

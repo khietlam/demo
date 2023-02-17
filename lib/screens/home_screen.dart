@@ -15,8 +15,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:demo/tflite/recognition.dart';
 import 'package:demo/tflite/stats.dart';
-import 'package:demo/screens/box_widget.dart';
-import 'package:demo/screens/camera_view_singleton.dart';
+import 'package:demo/components/box_widget.dart';
 import 'package:images_picker/images_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -25,7 +24,6 @@ import '../components/custom_route.dart';
 import '../data/model_and_label.dart';
 import '../services/account_info.dart';
 import '../tflite/custom_classifier.dart';
-import 'camera_view.dart';
 import 'package:demo/components/custom_dialog.dart' as customDialog;
 
 import 'dart:io';
@@ -583,9 +581,9 @@ class _HomeViewState extends State<HomeView> {
                   color: Colors.white,
                   letterSpacing: ScreenUtil().setSp(6.0),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.photo_library_outlined,
-                  size: ScreenUtil().setHeight(90),
+                  size: 30,
                 ),
                 backgroundColor: Colors.cyan,
                 foregroundColor: Colors.white,
@@ -606,9 +604,9 @@ class _HomeViewState extends State<HomeView> {
                   color: Colors.white,
                   letterSpacing: ScreenUtil().setSp(6.0),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.camera_alt_outlined,
-                  size: ScreenUtil().setHeight(90),
+                  size: 30,
                 ),
                 backgroundColor: Colors.green.shade400,
                 foregroundColor: Colors.white,
@@ -629,9 +627,9 @@ class _HomeViewState extends State<HomeView> {
                   color: Colors.white,
                   letterSpacing: ScreenUtil().setSp(6.0),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.remove_red_eye_outlined,
-                  size: ScreenUtil().setHeight(90),
+                  size: 30,
                 ),
                 backgroundColor: Colors.blueGrey,
                 foregroundColor: Colors.white,
@@ -648,7 +646,12 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future _getImageFromGallery(ImageSource source) async {
-    _image = null;
+    setState(() {
+      _image = null;
+      _recognitionList = [];
+      _sizeImagePicked = null;
+      _imageInput = null;
+    });
 
     try {
       _pickedFile = (await _picker.pickImage(source: source))!;
@@ -724,8 +727,13 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future _getImageFromCapture() async {
-    _image = null;
-    _path = null;
+    setState(() {
+      _image = null;
+      _path = null;
+      _recognitionList = [];
+      _sizeImagePicked = null;
+      _imageInput = null;
+    });
 
     List<Media>? res = await ImagesPicker.openCamera(
       // pickType: PickType.video,
@@ -772,7 +780,7 @@ class _HomeViewState extends State<HomeView> {
       File? image) async {
     final modelIndexReturn = await showDialog(
         context: context,
-        barrierColor: Colors.black.withOpacity(0.9),
+        barrierColor: Colors.black.withOpacity(0.8),
         builder: (BuildContext context) {
           //Here we will build the content of the dialog
           return customDialog.AlertDialog(

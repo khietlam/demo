@@ -853,7 +853,7 @@ final kfloatingLabelStyle = TextStyle(
 
 final kfloatingLabelStyleIPAD = TextStyle(
     fontFamily: 'Inter-Regular',
-    fontSize: 14.sp,
+    fontSize: 24.sp,
     fontWeight: FontWeight.w500,
     color: Colors.white.withOpacity(0.5),
     letterSpacing: 4.sp,
