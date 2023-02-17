@@ -58,7 +58,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyA9KxKrhpQC7C4EqeP67zEIUTPRbjKfEMg',
-    appId: '1:988287623865:ios:6bb9896087b88b5b687168',
+    appId: '1:988287623865:ios:bfcc1d42961eabaa687168',
     messagingSenderId: '988287623865',
     projectId: 'sga-2609',
     // databaseURL: 'https://abody-c8160.firebaseio.com',
@@ -66,8 +66,8 @@ class DefaultFirebaseOptions {
     androidClientId:
         '988287623865-2m7kmnfkfdp3iqt4ldqj6midtc5v05vf.apps.googleusercontent.com',
     iosClientId:
-        '988287623865-s9r84akogi8a8kmkrq76ejoa1klf7qlt.apps.googleusercontent.com',
-    iosBundleId: 'ai.sga.demo',
+        '988287623865-k6udql79ijl1odfg4toolk5l2b4kmhdc.apps.googleusercontent.com',
+    iosBundleId: 'ai.demo.byLam',
   );
 
 // static const FirebaseOptions macos = FirebaseOptions(
