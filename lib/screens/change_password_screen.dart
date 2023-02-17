@@ -262,7 +262,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                         left: 0,
                                         top: ScreenUtil().setHeight(10.0),
                                         right: 0,
-                                        bottom: ScreenUtil().setHeight(10.0)),
+                                        bottom: ScreenUtil().setHeight(16.0)),
                                     alignLabelWithHint: true,
                                     labelText: 'New Password',
                                     floatingLabelStyle: deviceType == 'mobile'

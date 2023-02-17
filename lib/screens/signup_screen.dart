@@ -40,11 +40,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   AccountInfo _account = AccountInfo();
 
   FormGroup buildForm() => fb.group(<String, Object>{
-        'username': FormControl<String>(
+        'email': FormControl<String>(
           validators: [
             Validators.required,
-            Validators.minLength(6),
-            Validators.maxLength(40)
+            Validators.email,
           ],
         ),
         'password': ['', Validators.required, Validators.minLength(6)],
@@ -203,7 +202,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     //   currentFocus.unfocus();
                                     // }
                                   },
-                                  formControlName: 'username',
+                                  formControlName: 'email',
                                   maxLines: 1,
                                   onSubmitted: (control) {
                                     FocusScope.of(context)
@@ -211,11 +210,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   },
                                   validationMessages: {
                                     ValidationMessage.required: (_) =>
-                                        'Username can\'t be empty',
-                                    ValidationMessage.minLength: (_) =>
-                                        'Enter a username with length at least 6',
-                                    ValidationMessage.maxLength: (_) =>
-                                        'Enter a username with max length at 40',
+                                        'Email can\'t be empty',
+                                    ValidationMessage.email: (_) =>
+                                        'Your email is not correct!',
                                   },
                                   textInputAction: Platform.isIOS
                                       ? TextInputAction.next
@@ -228,12 +225,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         left: 0,
                                         top: ScreenUtil().setHeight(10.0),
                                         right: 0,
-                                        bottom: ScreenUtil().setHeight(10.0)),
+                                        bottom: ScreenUtil().setHeight(15.0)),
                                     alignLabelWithHint: true,
                                     floatingLabelStyle: _deviceType == 'mobile'
                                         ? kfloatingLabelStyle
                                         : kfloatingLabelStyleIPAD,
-                                    labelText: 'Username',
+                                    labelText: 'Email',
                                     labelStyle: _deviceType == 'mobile'
                                         ? kFormLoginInactive
                                         : kFormLoginInactiveIPAD,
@@ -247,7 +244,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       padding: EdgeInsets.fromLTRB(0,
                                           ScreenUtil().setHeight(45.0), 0, 0),
                                       child: Icon(
-                                        CustomIcons.couple,
+                                        CustomIcons.envelope,
                                         color: Colors.white70,
                                         size: ScreenUtil().setHeight(60.0),
                                       ),
@@ -299,7 +296,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         left: 0,
                                         top: ScreenUtil().setHeight(10.0),
                                         right: 0,
-                                        bottom: ScreenUtil().setHeight(10.0)),
+                                        bottom: ScreenUtil().setHeight(16.0)),
                                     alignLabelWithHint: true,
                                     labelText: 'Password',
                                     floatingLabelStyle: _deviceType == 'mobile'
@@ -347,7 +344,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               // print(form.value);
                               Map<String, dynamic> formOut = form.value;
                               _account.username =
-                                  formOut['username'].replaceAll(' ', '');
+                                  formOut['email'].replaceAll(' ', '');
                               _account.password =
                                   formOut['password'].replaceAll(' ', '');
 
@@ -362,25 +359,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ))!;
 
                                   // print(_account.user);
-                                  if (_account.message != null) {
-                                    switch (_account.message) {
-                                      case 'weak-password':
-                                        setState(() {
-                                          _showSpinner = false;
-                                          _showErrorMessage(
-                                              'The password provided is too weak!');
-                                        });
-                                        break;
-                                      case 'email-already-in-use':
-                                        setState(() {
-                                          _showSpinner = false;
-                                          _showErrorMessage(
-                                              'The account already exists for that email!');
-                                        });
-
-                                        break;
-                                    }
-                                  } else if (_account.user!.uid != null) {
+                                  if (_account.user!.uid != null) {
                                     setState(() {
                                       _showSpinner = false;
                                       Future.delayed(const Duration(seconds: 0))
@@ -404,6 +383,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   throw e;
                                 } on Error catch (e) {
                                   print(e);
+                                  _showErrorMessage(e.toString());
                                   setState(() {
                                     _showSpinner = false;
                                   });
