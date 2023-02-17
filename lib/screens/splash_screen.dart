@@ -12,6 +12,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 
+import '../components/firebase_options.dart';
 import '../services/account_info.dart';
 import '../utils/firebase_auth_utils.dart';
 import 'home.dart';
@@ -56,7 +57,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<FirebaseApp> _initializeFirebase() async {
-    FirebaseApp firebaseApp = await Firebase.initializeApp();
+
+
+    FirebaseApp firebaseApp = await Firebase.initializeApp( options: DefaultFirebaseOptions.currentPlatform,);
+
 
     account.user = FirebaseAuth.instance.currentUser;
 

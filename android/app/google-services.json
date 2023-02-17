@@ -7,14 +7,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:988287623865:android:babd74456eb0030c687168",
+        "mobilesdk_app_id": "1:988287623865:android:6fc03489264a1967687168",
         "android_client_info": {
-          "package_name": "ai.sga.demo"
+          "package_name": "ai.demo.byLam"
         }
       },
       "oauth_client": [
         {
-          "client_id": "988287623865-2m7kmnfkfdp3iqt4ldqj6midtc5v05vf.apps.googleusercontent.com",
+          "client_id": "988287623865-8b30jcgoeoc5gqomtps8vp29gjdccsu6.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -31,10 +31,46 @@
               "client_type": 3
             },
             {
-              "client_id": "988287623865-s9r84akogi8a8kmkrq76ejoa1klf7qlt.apps.googleusercontent.com",
+              "client_id": "988287623865-k6udql79ijl1odfg4toolk5l2b4kmhdc.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "ai.sga.demo"
+                "bundle_id": "ai.demo.byLam"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988287623865:android:babd74456eb0030c687168",
+        "android_client_info": {
+          "package_name": "ai.sga.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "988287623865-8b30jcgoeoc5gqomtps8vp29gjdccsu6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkHn6p-nr4isFicjGPBT_Oh05Vsh6KDMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "988287623865-2m7kmnfkfdp3iqt4ldqj6midtc5v05vf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "988287623865-k6udql79ijl1odfg4toolk5l2b4kmhdc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ai.demo.byLam"
               }
             }
           ]

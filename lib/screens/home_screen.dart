@@ -289,6 +289,14 @@ class _HomeViewState extends State<HomeView> {
     Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (result == null && _start < 7) {
         _start = _start + 1;
+        if (_start == 6) {
+          setState(() {
+            timer.cancel();
+            _start = 0;
+            _showSpinner = false;
+          });
+
+        }
       } else {
         if (mounted) {
           setState(() {

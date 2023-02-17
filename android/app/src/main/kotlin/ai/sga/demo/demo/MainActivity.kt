@@ -1,4 +1,4 @@
-package ai.sga.demo.demo
+package ai.demo.byLam
 
 import io.flutter.embedding.android.FlutterActivity
 

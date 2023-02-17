@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ai.sga.demo.demo">
+    package="ai.demo.byLam">
 
     <application
         android:label="demo"
