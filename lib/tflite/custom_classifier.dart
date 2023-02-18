@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 import 'package:collection/collection.dart';
@@ -73,11 +74,49 @@ class Classifier {
         myOptions.addDelegate(gpuDelegateV2);
       }*/
 
-      _interpreter = interpreter ??
-          await Interpreter.fromAsset(
-            "models/$fileModelName",
-            options: InterpreterOptions()..threads = numThreads, //myOptions,
-          );
+      if ( Platform.isIOS) {
+        //iOS Metal Delegate (GpuDelegate)
+
+        // final gpuDelegate = GpuDelegate(
+        //     options: GpuDelegateOptions(allowPrecisionLoss: true, waitType: TFLGpuDelegateWaitType.active));
+        // var interpreterOptions = InterpreterOptions()..addDelegate(gpuDelegate);
+
+        _interpreter = interpreter ??
+            await Interpreter.fromAsset(
+              "models/$fileModelName",
+              options: InterpreterOptions()..threads = numThreads, //myOptions,
+            );
+
+      } else if (Platform.isAndroid) {
+        //Android GpuDelegateV2
+
+        final gpuDelegateV2 = GpuDelegateV2(
+            options: GpuDelegateOptionsV2(
+              isPrecisionLossAllowed: false,
+              inferencePreference: TfLiteGpuInferenceUsage.fastSingleAnswer,
+              inferencePriority1: TfLiteGpuInferencePriority.minLatency,
+              inferencePriority2: TfLiteGpuInferencePriority.auto,
+              inferencePriority3: TfLiteGpuInferencePriority.auto,
+            ));
+
+
+
+        var interpreterOptions = InterpreterOptions()..addDelegate(gpuDelegateV2);
+
+        // var interpreterOptions = InterpreterOptions()..useNnApiForAndroid = true;
+        // var interpreterOptions = InterpreterOptions()..addDelegate(NnApiDelegate());
+
+
+        _interpreter = interpreter ??
+            await Interpreter.fromAsset(
+              "models/$fileModelName",
+              options: interpreterOptions, //myOptions,
+            );
+
+
+
+      }
+
 
       var outputTensors = _interpreter!.getOutputTensors();
       //print("the length of the output Tensors is ${outputTensors.length}");
