@@ -396,6 +396,6 @@ class Classifier {
   }
 
   void close() {
-    interpreter.close();
+    _interpreter!.close();
   }
 }

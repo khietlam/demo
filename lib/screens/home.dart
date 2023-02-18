@@ -276,6 +276,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 shape: BoxShape.rectangle,
               ),
               child: TabBarView(
+                physics: NeverScrollableScrollPhysics(),
                 // Add tabs as widgets
                 controller: controller,
                 // Add tabs as widgets

@@ -130,8 +130,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.only(
-                              left: 20.0,
+                            padding: EdgeInsets.only(
+                              left: 0.015.sh,
+                              top: 0.05.sh,
                             ),
                             child: Text(
                               "Welcome to SGA.ai",

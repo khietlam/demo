@@ -53,6 +53,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   AccountInfo _account = AccountInfo();
 
   FormGroup buildForm() => fb.group(<String, Object>{
+        'currentPassword': ['', Validators.required, Validators.minLength(6)],
         'newPassword': ['', Validators.required, Validators.minLength(6)],
       });
 
@@ -83,6 +84,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       webShowClose: true,
     );
   }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -237,6 +240,76 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     //   currentFocus.unfocus();
                                     // }
                                   },
+                                  formControlName: 'currentPassword',
+                                  obscureText: true,
+                                  maxLines: 1,
+                                  onSubmitted: (control) {
+                                    FocusScope.of(context)
+                                        .requestFocus(focusPassword);
+                                  },
+                                  validationMessages: {
+                                    ValidationMessage.required: (_) =>
+                                        'Password can\'t be empty',
+                                    ValidationMessage.minLength: (_) =>
+                                        'Enter a password with length at least 6',
+                                  },
+                                  textInputAction: Platform.isIOS
+                                      ? TextInputAction.next
+                                      : TextInputAction.go,
+                                  style: deviceType == 'mobile'
+                                      ? kFormLoginActive
+                                      : kFormLoginActiveIPAD,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.only(
+                                        left: 0,
+                                        top: ScreenUtil().setHeight(10.0),
+                                        right: 0,
+                                        bottom: ScreenUtil().setHeight(16.0)),
+                                    alignLabelWithHint: true,
+                                    labelText: 'Current Password',
+                                    floatingLabelStyle: deviceType == 'mobile'
+                                        ? kfloatingLabelStyle
+                                        : kfloatingLabelStyleIPAD,
+                                    labelStyle: deviceType == 'mobile'
+                                        ? kFormLoginInactive
+                                        : kFormLoginInactiveIPAD,
+                                    border: InputBorder.none,
+                                    helperText: '',
+                                    helperStyle: const TextStyle(height: 0.7),
+                                    errorStyle: deviceType == 'mobile'
+                                        ? kerrorStyle
+                                        : kerrorStyleIPAD,
+                                    icon: Padding(
+                                      padding: EdgeInsets.fromLTRB(0,
+                                          ScreenUtil().setHeight(25.0), 0, 0),
+                                      child: Icon(
+                                        CustomIcons.lock,
+                                        color: Colors.white70,
+                                        size: ScreenUtil().setHeight(60.0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+//                             // Cach le trai 10px
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: ScreenUtil().setWidth(30.0),
+                                ),
+                                height: ScreenUtil().setHeight(150.0),
+                                // Vien day duoi textbox
+                                decoration: kTextFormDecoration,
+
+                                child: ReactiveTextField<String>(
+                                  onTap: (control) {
+                                    // FocusScopeNode currentFocus =
+                                    //     FocusScope.of(context);
+                                    //
+                                    // if (!currentFocus.hasPrimaryFocus) {
+                                    //   currentFocus.unfocus();
+                                    // }
+                                  },
                                   focusNode: focusPassword,
                                   formControlName: 'newPassword',
                                   obscureText: true,
@@ -247,9 +320,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                   },
                                   validationMessages: {
                                     ValidationMessage.required: (_) =>
-                                        'Password can\'t be empty',
+                                    'Password can\'t be empty',
                                     ValidationMessage.minLength: (_) =>
-                                        'Enter a password with length at least 6',
+                                    'Enter a password with length at least 6',
                                   },
                                   textInputAction: Platform.isIOS
                                       ? TextInputAction.next
@@ -279,7 +352,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                         : kerrorStyleIPAD,
                                     icon: Padding(
                                       padding: EdgeInsets.fromLTRB(0,
-                                          ScreenUtil().setHeight(45.0), 0, 0),
+                                          ScreenUtil().setHeight(25.0), 0, 0),
                                       child: Icon(
                                         CustomIcons.lock,
                                         color: Colors.white70,
@@ -309,56 +382,66 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               });
                               // print(form.value);
                               Map<String, dynamic> formOut = form.value;
+                              _account.password = formOut['currentPassword']
+                                  .replaceAll(' ', '');
                               _account.newPassword =
                                   formOut['newPassword'].replaceAll(' ', '');
 
+                              print(_account.user!.email);
+                              print(_account.password);
                               print(_account.newPassword);
+
                               if (_isOffline) {
                                 _showErrorNetwork();
                               } else {
-                                try {
-                                  User? user =
-                                      FirebaseAuth.instance.currentUser;
-                                  print(user);
+                                User? user = FirebaseAuth.instance.currentUser;
 
-                                  user!
+                                final cred = await EmailAuthProvider.credential(
+                                    email: user!.email!,
+                                    password: _account.password);
+
+                                await user
+                                    .reauthenticateWithCredential(cred)
+                                    .then((value) async {
+                                  await user
                                       .updatePassword(_account.newPassword)
                                       .then((_) {
+                                    _account.user = user;
+                                    _showSuccess();
+                                    Future.delayed(const Duration(seconds: 1))
+                                        .then((value) {
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                          builder: (context) => Home(
+                                            account: _account,
+                                            pageIndex: 1,
+                                            classifier: widget.classifier,
+                                            image: widget.image,
+                                            modelIndex: widget.modelIndex,
+                                          ),
+                                        ),
+                                      );
+                                    });
+
                                     setState(() {
                                       _showSpinner = false;
-                                      _showSuccess();
-                                      Future.delayed(const Duration(seconds: 1))
-                                          .then((value) {
-                                        Navigator.of(context).pushReplacement(
-                                          MaterialPageRoute(
-                                            builder: (context) => Home(
-                                              pageIndex: 1,
-                                              image: widget.image,
-                                              classifier: widget.classifier,
-                                              account: _account,
-                                              modelIndex: widget.modelIndex,
-                                            ),
-                                          ),
-                                        );
-                                      });
                                     });
+                                    print(user);
                                   }).catchError((error) {
-                                    print("Password can't be changed - $error");
-                                    //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
+                                    _showErrorMessage(error.toString());
+                                    print(error);
+                                    setState(() {
+                                      _showSpinner = false;
+                                    });
                                   });
-                                } on FirebaseAuthException catch (e) {
-                                  // print(e.message);
-                                  _showErrorMessage(e.message!);
+                                }).catchError((err) {
+                                  _showErrorMessage(err.toString());
+
+                                  print(err);
                                   setState(() {
                                     _showSpinner = false;
                                   });
-                                  throw e;
-                                } on Error catch (e) {
-                                  print(e);
-                                  setState(() {
-                                    _showSpinner = false;
-                                  });
-                                }
+                                });
                               }
                             } else {
                               form.markAllAsTouched();

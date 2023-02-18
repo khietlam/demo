@@ -122,149 +122,138 @@ class _InfoScreenState extends State<InfoScreen> {
 
     return WillPopScope(
       onWillPop: () async => false,
-      child: GestureDetector(
-        onVerticalDragUpdate: (details) {},
-        onHorizontalDragUpdate: (details) {
-          if (details.delta.direction > 0) {
-            // Navigator.of(context).push(MaterialPageRoute(builder: (context) => Home()));
-            debugPrint('swipe left');
-          } else if (details.delta.direction <= 0) {
-            debugPrint('swipe right');
-          }
-        },
-        child: MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: HexColor('#B28B4B').withOpacity(0.9), //aaa
-              leading: Container(),
-              actions: [
-                IconButton(
-                  onPressed: () async {
-                    setState(() {
-                      _showSpinner = true;
-                    });
+      child: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: HexColor('#B28B4B').withOpacity(0.9), //aaa
+            leading: Container(),
+            actions: [
+              IconButton(
+                onPressed: () async {
+                  setState(() {
+                    _showSpinner = true;
+                  });
 
-                    try {
-                      if (_account.user!.uid != null) {
-                        FirebaseAuth.instance.signOut();
-                        print('xong Firebase');
-                      }
-
-                      if (_account.googleSignIn != null) {
-                        signOutFromGoogle();
-                      }
-
-                      _showSuccess();
-
-                      Future.delayed(const Duration(seconds: 2)).then((value) {
-                        _showSpinner = false;
-                        Navigator.pushReplacement(
-                            context, FadeRoute(page: WelcomeScreen()));
-                      });
-                    } on FirebaseAuthException catch (e) {
-                      // print(e.message);
-                      _showErrorMessage(e.message!);
-                      setState(() {
-                        _showSpinner = false;
-                      });
-                      throw e;
-                    } on Error catch (e) {
-                      print(e);
-                      setState(() {
-                        _showSpinner = false;
-                      });
+                  try {
+                    if (_account.user!.uid != null) {
+                      FirebaseAuth.instance.signOut();
+                      print('xong Firebase');
                     }
-                  },
-                  icon: const Icon(Icons.exit_to_app_rounded),
-                )
-              ],
-              title: const Text('Info'),
+
+                    if (_account.googleSignIn != null) {
+                      signOutFromGoogle();
+                    }
+
+                    _showSuccess();
+
+                    Future.delayed(const Duration(seconds: 1)).then((value) {
+                      _showSpinner = false;
+                      Navigator.pushReplacement(
+                          context, FadeRoute(page: WelcomeScreen()));
+                    });
+                  } on FirebaseAuthException catch (e) {
+                    // print(e.message);
+                    _showErrorMessage(e.message!);
+                    setState(() {
+                      _showSpinner = false;
+                    });
+                    throw e;
+                  } on Error catch (e) {
+                    print(e);
+                    setState(() {
+                      _showSpinner = false;
+                    });
+                  }
+                },
+                icon: const Icon(Icons.exit_to_app_rounded),
+              )
+            ],
+            title: const Text('Info'),
+          ),
+          resizeToAvoidBottomInset: false,
+          body: ModalProgressHUD(
+            inAsyncCall: _showSpinner,
+            progressIndicator: SpinKitFadingFour(
+              color: Colors.green.withOpacity(0.6),
+              size: 35.0,
+              shape: BoxShape.rectangle,
             ),
-            resizeToAvoidBottomInset: false,
-            body: ModalProgressHUD(
-              inAsyncCall: _showSpinner,
-              progressIndicator: SpinKitFadingFour(
-                color: Colors.green.withOpacity(0.6),
-                size: 35.0,
-                shape: BoxShape.rectangle,
-              ),
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: ListView(
-                      children: <Widget>[
-                        SizedBox(
-                          height: ScreenUtil().setHeight(120.0),
-                        ),
-                        RowButton(
-                          icon: Icons.password_outlined,
-                          title: 'Change Password',
-                          iconSize: ScreenUtil().setHeight(70.0),
-                          fontSize: deviceType == 'mobile' ? 48.sp : 32.sp,
-                          letterSpacing: deviceType == 'mobile' ? 6.sp : 3.sp,
-                          onTap: () {
-                            Future.delayed(const Duration(seconds: 0))
-                                .then((value) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => ChangePasswordScreen(
-                                    title: widget.title,
-                                    image: widget.image,
-                                    classifier: widget.classifier,
-                                    account: _account,
-                                    modelIndex: widget.modelIndex,
-                                  ),
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: ListView(
+                    children: <Widget>[
+                      SizedBox(
+                        height: ScreenUtil().setHeight(120.0),
+                      ),
+                      RowButton(
+                        icon: Icons.password_outlined,
+                        title: 'Change Password',
+                        iconSize: ScreenUtil().setHeight(70.0),
+                        fontSize: deviceType == 'mobile' ? 48.sp : 32.sp,
+                        letterSpacing: deviceType == 'mobile' ? 6.sp : 3.sp,
+                        onTap: () {
+                          Future.delayed(const Duration(seconds: 0))
+                              .then((value) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ChangePasswordScreen(
+                                  title: widget.title,
+                                  image: widget.image,
+                                  classifier: widget.classifier,
+                                  account: _account,
+                                  modelIndex: widget.modelIndex,
                                 ),
-                              );
-                            });
-                          },
-                        ),
-                        SizedBox(
-                          height: ScreenUtil().setHeight(30.0),
-                        ),
-                        RowButton(
-                          icon: Icons.info_outline,
-                          title: 'About Us',
-                          iconSize: ScreenUtil().setHeight(70.0),
-                          fontSize: deviceType == 'mobile' ? 48.sp : 32.sp,
-                          letterSpacing: deviceType == 'mobile' ? 6.sp : 3.sp,
-                          onTap: () {
-                            Future.delayed(const Duration(seconds: 0))
-                                .then((value) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => AboutScreen(),
-                                ),
-                              );
-                            });
-                          },
-                        ),
-                        SizedBox(
-                          height: ScreenUtil().setHeight(30.0),
-                        ),
-                        RowButton(
-                          icon: Icons.phone,
-                          title: 'Contact Us',
-                          iconSize: ScreenUtil().setHeight(70.0),
-                          fontSize: deviceType == 'mobile' ? 48.sp : 32.sp,
-                          letterSpacing: deviceType == 'mobile' ? 6.sp : 3.sp,
-                          onTap: () {
-                            Future.delayed(const Duration(seconds: 0))
-                                .then((value) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => ContactUsScreen(),
-                                ),
-                              );
-                            });
-                          },
-                        ),
-                      ],
-                    ),
+                              ),
+                            );
+                          });
+                        },
+                      ),
+                      SizedBox(
+                        height: ScreenUtil().setHeight(30.0),
+                      ),
+                      RowButton(
+                        icon: Icons.info_outline,
+                        title: 'About Us',
+                        iconSize: ScreenUtil().setHeight(70.0),
+                        fontSize: deviceType == 'mobile' ? 48.sp : 32.sp,
+                        letterSpacing: deviceType == 'mobile' ? 6.sp : 3.sp,
+                        onTap: () {
+                          Future.delayed(const Duration(seconds: 0))
+                              .then((value) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => AboutScreen(),
+                              ),
+                            );
+                          });
+                        },
+                      ),
+                      SizedBox(
+                        height: ScreenUtil().setHeight(30.0),
+                      ),
+                      RowButton(
+                        icon: Icons.phone,
+                        title: 'Contact Us',
+                        iconSize: ScreenUtil().setHeight(70.0),
+                        fontSize: deviceType == 'mobile' ? 48.sp : 32.sp,
+                        letterSpacing: deviceType == 'mobile' ? 6.sp : 3.sp,
+                        onTap: () {
+                          Future.delayed(const Duration(seconds: 0))
+                              .then((value) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ContactUsScreen(),
+                              ),
+                            );
+                          });
+                        },
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

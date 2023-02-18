@@ -23,14 +23,16 @@ class AuthenticationService {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         account.message = e.code;
-        print('The password provided is too weak.');
+        print(account.message);
+        // print('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
         account.message = e.code;
-        print('The account already exists for that email.');
+        print(account.message);
+        // print('The account already exists for that email.');
       }
-    } catch (e) {
-      account.error_code = e;
+    } on Error catch (e) {
       print(e);
+      account.message = e.toString();
     }
 
     return account;
@@ -58,6 +60,9 @@ class AuthenticationService {
         print('Wrong password provided.');
         account.message = e.code;
       }
+    } on Error catch (e) {
+      print(e);
+      account.message = e.toString();
     }
 
     return account;
@@ -89,12 +94,15 @@ class AuthenticationService {
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        // print('No user found for that email.');
         account.message = e.code;
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided.');
+        // print('Wrong password provided.');
         account.message = e.code;
       }
+    } on Error catch (e) {
+      print(e);
+      account.message = e.toString();
     }
 
     return account;

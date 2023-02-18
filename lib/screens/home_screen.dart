@@ -295,7 +295,6 @@ class _HomeViewState extends State<HomeView> {
             _start = 0;
             _showSpinner = false;
           });
-
         }
       } else {
         if (mounted) {
@@ -351,6 +350,8 @@ class _HomeViewState extends State<HomeView> {
   @override
   void dispose() {
     // TODO: implement dispose
+    // _classifier!.close();
+    print('da dispose trang Home Screen');
     super.dispose();
   }
 
@@ -376,50 +377,46 @@ class _HomeViewState extends State<HomeView> {
     // print('check device w: ${deviceSize!.width}');
     // print('check device h: ${deviceSize!.height}');
 
-    return GestureDetector(
-      onVerticalDragUpdate: (details) {},
-      onHorizontalDragUpdate: (details) {
-        if (details.delta.direction > 0) {
-          // Navigator.of(context).push(MaterialPageRoute(builder: (context) => Home()));
-          debugPrint('swipe left');
-        } else if (details.delta.direction <= 0) {
-          debugPrint('swipe right');
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: HexColor('#B28B4B').withOpacity(0.9),
-          leading: Container(),
-          actions: [
-            Container(),
-            // IconButton(
-            //   onPressed: () async {
-            //     setState(() {
-            //       _showSpinner = true;
-            //     });
-            //     await FirebaseAuth.instance.signOut();
-            //     Future.delayed(const Duration(seconds: 0)).then((value) {
-            //       _showSpinner = false;
-            //       Navigator.pushReplacement(
-            //           context, FadeRoute(page: WelcomeScreen()));
-            //     });
-            //   },
-            //   icon: const Icon(Icons.exit_to_app_rounded),
-            // )
-          ],
-          title: Text(widget.title!),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: HexColor('#B28B4B').withOpacity(0.9),
+        leading: Container(),
+        actions: [
+          Container(),
+          // IconButton(
+          //   onPressed: () async {
+          //     setState(() {
+          //       _showSpinner = true;
+          //     });
+          //     await FirebaseAuth.instance.signOut();
+          //     Future.delayed(const Duration(seconds: 0)).then((value) {
+          //       _showSpinner = false;
+          //       Navigator.pushReplacement(
+          //           context, FadeRoute(page: WelcomeScreen()));
+          //     });
+          //   },
+          //   icon: const Icon(Icons.exit_to_app_rounded),
+          // )
+        ],
+        title: Text(widget.title!),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      body: ModalProgressHUD(
+        inAsyncCall: _showSpinner,
+        progressIndicator: SpinKitFadingFour(
+          color: Colors.green.withOpacity(0.6),
+          size: 35.0,
+          shape: BoxShape.rectangle,
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-        body: ModalProgressHUD(
-          inAsyncCall: _showSpinner,
-          progressIndicator: SpinKitFadingFour(
-            color: Colors.green.withOpacity(0.6),
-            size: 35.0,
-            shape: BoxShape.rectangle,
-          ),
-          child: Column(
-            children: <Widget>[
-              Container(
+        child: Column(
+          children: <Widget>[
+            InteractiveViewer(
+              panEnabled: true,
+              // Set it to false
+              boundaryMargin: EdgeInsets.all(100),
+              minScale: 0.5,
+              maxScale: 8,
+              child: Container(
                 constraints: BoxConstraints(
                     maxHeight: MediaQuery.of(context).size.width),
                 decoration: BoxDecoration(
@@ -460,194 +457,194 @@ class _HomeViewState extends State<HomeView> {
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 36,
+            ),
+            const SizedBox(
+              height: 36,
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    _recognitionList.isNotEmpty
+                        ? 'Total: ${_recognitionList.length}'
+                        : 'Select a photo to run with model ${widget.title}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    _recognitionList.isNotEmpty
+                        ? 'Total Predict Time: ${_displayStats.totalPredictTime} ms'
+                        : '',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  // Text(
+                  //   recognitionList.isNotEmpty
+                  //       ? 'Inference Time: ${displayStats.inferenceTime} ms'
+                  //       : '',
+                  //   style: TextStyle(fontSize: 16),
+                  // ),
+                  // Text(
+                  //   recognitionList.isNotEmpty
+                  //       ? 'PreProcessing Time: ${displayStats.preProcessingTime} ms'
+                  //       : '',
+                  //   style: TextStyle(fontSize: 16),
+                  // ),
+                ],
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      _recognitionList.isNotEmpty
-                          ? 'Total: ${_recognitionList.length}'
-                          : 'Select a photo to run with model ${widget.title}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    Text(
-                      _recognitionList.isNotEmpty
-                          ? 'Total Predict Time: ${_displayStats.totalPredictTime} ms'
-                          : '',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    // Text(
-                    //   recognitionList.isNotEmpty
-                    //       ? 'Inference Time: ${displayStats.inferenceTime} ms'
-                    //       : '',
-                    //   style: TextStyle(fontSize: 16),
-                    // ),
-                    // Text(
-                    //   recognitionList.isNotEmpty
-                    //       ? 'PreProcessing Time: ${displayStats.preProcessingTime} ms'
-                    //       : '',
-                    //   style: TextStyle(fontSize: 16),
-                    // ),
-                  ],
-                ),
-              )
-              // Text(
-              //   category != null ? category!.label : '',
-              //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-              // ),
-              // SizedBox(
-              //   height: 8,
-              // ),
-            ],
-          ),
+            )
+            // Text(
+            //   category != null ? category!.label : '',
+            //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            // ),
+            // SizedBox(
+            //   height: 8,
+            // ),
+          ],
         ),
-        floatingActionButton: Padding(
-          padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(90.0)),
-          child: SpeedDial(
-            backgroundColor: HexColor('#B28B4B'),
-            // icon: Icons.add,
-            animatedIcon: AnimatedIcons.menu_close,
-            activeIcon: Icons.close,
-            spacing: 3,
-            openCloseDial: isDialOpen,
-            childPadding: EdgeInsets.all(ScreenUtil().setHeight(10.0)),
-            spaceBetweenChildren: ScreenUtil().setHeight(60.0),
-            dialRoot: customDialRoot
-                ? (ctx, open, toggleChildren) {
-                    return ElevatedButton(
-                      onPressed: toggleChildren,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff0B413D),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 22, vertical: 18),
-                      ),
-                      child: Text(
-                        "Custom Dial Root",
-                        style: TextStyle(
-                            // height: 2,
-                            fontFamily: 'Inter',
-                            fontSize: ScreenUtil().setSp(30.0),
-                            color: Colors.lightGreenAccent,
-                            letterSpacing: ScreenUtil().setSp(9.0),
-                            fontWeight: FontWeight.bold),
-                      ),
-                    );
-                  }
-                : null,
-            buttonSize: buttonSize,
-            // it's the SpeedDial size which defaults to 56 itself
-            // iconTheme: IconThemeData(size: 22),
-            label: extend ? const Text("Open") : null,
-            // The label of the main button.
-            /// The active label of the main button, Defaults to label if not specified.
-            activeLabel: extend ? const Text("Close") : null,
+      ),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(90.0)),
+        child: SpeedDial(
+          backgroundColor: HexColor('#B28B4B'),
+          // icon: Icons.add,
+          animatedIcon: AnimatedIcons.menu_close,
+          activeIcon: Icons.close,
+          spacing: 3,
+          openCloseDial: isDialOpen,
+          childPadding: EdgeInsets.all(ScreenUtil().setHeight(10.0)),
+          spaceBetweenChildren: ScreenUtil().setHeight(60.0),
+          dialRoot: customDialRoot
+              ? (ctx, open, toggleChildren) {
+                  return ElevatedButton(
+                    onPressed: toggleChildren,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff0B413D),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 22, vertical: 18),
+                    ),
+                    child: Text(
+                      "Custom Dial Root",
+                      style: TextStyle(
+                          // height: 2,
+                          fontFamily: 'Inter',
+                          fontSize: ScreenUtil().setSp(30.0),
+                          color: Colors.lightGreenAccent,
+                          letterSpacing: ScreenUtil().setSp(9.0),
+                          fontWeight: FontWeight.bold),
+                    ),
+                  );
+                }
+              : null,
+          buttonSize: buttonSize,
+          // it's the SpeedDial size which defaults to 56 itself
+          // iconTheme: IconThemeData(size: 22),
+          label: extend ? const Text("Open") : null,
+          // The label of the main button.
+          /// The active label of the main button, Defaults to label if not specified.
+          activeLabel: extend ? const Text("Close") : null,
 
-            /// Transition Builder between label and activeLabel, defaults to FadeTransition.
-            // labelTransitionBuilder: (widget, animation) => ScaleTransition(scale: animation,child: widget),
-            /// The below button size defaults to 56 itself, its the SpeedDial childrens size
-            childrenButtonSize: childrenButtonSize,
-            visible: visible,
-            direction: speedDialDirection,
-            switchLabelPosition: switchLabelPosition,
+          /// Transition Builder between label and activeLabel, defaults to FadeTransition.
+          // labelTransitionBuilder: (widget, animation) => ScaleTransition(scale: animation,child: widget),
+          /// The below button size defaults to 56 itself, its the SpeedDial childrens size
+          childrenButtonSize: childrenButtonSize,
+          visible: visible,
+          direction: speedDialDirection,
+          switchLabelPosition: switchLabelPosition,
 
-            /// If true user is forced to close dial manually
-            closeManually: closeManually,
+          /// If true user is forced to close dial manually
+          closeManually: closeManually,
 
-            /// If false, backgroundOverlay will not be rendered.
-            renderOverlay: renderOverlay,
-            // overlayColor: Colors.black,
-            // overlayOpacity: 0.5,
-            // onOpen: () => debugPrint('OPENING DIAL'),
-            // onClose: () => debugPrint('DIAL CLOSED'),
-            useRotationAnimation: useRAnimation,
-            // tooltip: 'Open Speed Dial',
-            // heroTag: 'speed-dial-hero-tag',
-            // foregroundColor: Colors.black,
-            // backgroundColor: Colors.white,
-            // activeForegroundColor: Colors.red,
-            // activeBackgroundColor: Colors.blue,
-            elevation: 5.0,
-            isOpenOnStart: false,
-            shape: customDialRoot
-                ? const RoundedRectangleBorder()
-                : const StadiumBorder(),
-            // childMargin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            children: [
-              SpeedDialChild(
-                label: 'Photo album',
-                labelBackgroundColor: Colors.cyan,
-                labelStyle: TextStyle(
-                  // height: 2,
-                  fontFamily: 'Inter',
-                  fontSize: _deviceType == 'mobile'
-                      ? ScreenUtil().setSp(35.0)
-                      : ScreenUtil().setSp(25.0),
-                  color: Colors.white,
-                  letterSpacing: ScreenUtil().setSp(6.0),
-                ),
-                child: const Icon(
-                  Icons.photo_library_outlined,
-                  size: 30,
-                ),
-                backgroundColor: Colors.cyan,
-                foregroundColor: Colors.white,
-                visible: true,
-                onTap: () async {
-                  _getImageFromGallery(ImageSource.gallery);
-                },
+          /// If false, backgroundOverlay will not be rendered.
+          renderOverlay: renderOverlay,
+          // overlayColor: Colors.black,
+          // overlayOpacity: 0.5,
+          // onOpen: () => debugPrint('OPENING DIAL'),
+          // onClose: () => debugPrint('DIAL CLOSED'),
+          useRotationAnimation: useRAnimation,
+          // tooltip: 'Open Speed Dial',
+          // heroTag: 'speed-dial-hero-tag',
+          // foregroundColor: Colors.black,
+          // backgroundColor: Colors.white,
+          // activeForegroundColor: Colors.red,
+          // activeBackgroundColor: Colors.blue,
+          elevation: 5.0,
+          isOpenOnStart: false,
+          shape: customDialRoot
+              ? const RoundedRectangleBorder()
+              : const StadiumBorder(),
+          // childMargin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          children: [
+            SpeedDialChild(
+              label: 'Photo album',
+              labelBackgroundColor: Colors.cyan,
+              labelStyle: TextStyle(
+                // height: 2,
+                fontFamily: 'Inter',
+                fontSize: _deviceType == 'mobile'
+                    ? ScreenUtil().setSp(35.0)
+                    : ScreenUtil().setSp(25.0),
+                color: Colors.white,
+                letterSpacing: ScreenUtil().setSp(6.0),
               ),
-              SpeedDialChild(
-                label: 'Take a photo',
-                labelBackgroundColor: Colors.green.shade400,
-                labelStyle: TextStyle(
-                  // height: 2,
-                  fontFamily: 'Inter',
-                  fontSize: _deviceType == 'mobile'
-                      ? ScreenUtil().setSp(35.0)
-                      : ScreenUtil().setSp(25.0),
-                  color: Colors.white,
-                  letterSpacing: ScreenUtil().setSp(6.0),
-                ),
-                child: const Icon(
-                  Icons.camera_alt_outlined,
-                  size: 30,
-                ),
-                backgroundColor: Colors.green.shade400,
-                foregroundColor: Colors.white,
-                visible: true,
-                onTap: () async {
-                  _getImageFromCapture();
-                },
+              child: const Icon(
+                Icons.photo_library_outlined,
+                size: 30,
               ),
-              SpeedDialChild(
-                label: 'Change model',
-                labelBackgroundColor: Colors.blueGrey,
-                labelStyle: TextStyle(
-                  // height: 2,
-                  fontFamily: 'Inter',
-                  fontSize: _deviceType == 'mobile'
-                      ? ScreenUtil().setSp(35.0)
-                      : ScreenUtil().setSp(25.0),
-                  color: Colors.white,
-                  letterSpacing: ScreenUtil().setSp(6.0),
-                ),
-                child: const Icon(
-                  Icons.remove_red_eye_outlined,
-                  size: 30,
-                ),
-                backgroundColor: Colors.blueGrey,
-                foregroundColor: Colors.white,
-                visible: true,
-                onTap: () async {
-                  _chooseModel(_modelIndex, _account, _classifier, _image);
-                },
+              backgroundColor: Colors.cyan,
+              foregroundColor: Colors.white,
+              visible: true,
+              onTap: () async {
+                _getImageFromGallery(ImageSource.gallery);
+              },
+            ),
+            SpeedDialChild(
+              label: 'Take a photo',
+              labelBackgroundColor: Colors.green.shade400,
+              labelStyle: TextStyle(
+                // height: 2,
+                fontFamily: 'Inter',
+                fontSize: _deviceType == 'mobile'
+                    ? ScreenUtil().setSp(35.0)
+                    : ScreenUtil().setSp(25.0),
+                color: Colors.white,
+                letterSpacing: ScreenUtil().setSp(6.0),
               ),
-            ],
-          ),
+              child: const Icon(
+                Icons.camera_alt_outlined,
+                size: 30,
+              ),
+              backgroundColor: Colors.green.shade400,
+              foregroundColor: Colors.white,
+              visible: true,
+              onTap: () async {
+                _getImageFromCapture();
+              },
+            ),
+            SpeedDialChild(
+              label: 'Change model',
+              labelBackgroundColor: Colors.blueGrey,
+              labelStyle: TextStyle(
+                // height: 2,
+                fontFamily: 'Inter',
+                fontSize: _deviceType == 'mobile'
+                    ? ScreenUtil().setSp(35.0)
+                    : ScreenUtil().setSp(25.0),
+                color: Colors.white,
+                letterSpacing: ScreenUtil().setSp(6.0),
+              ),
+              child: const Icon(
+                Icons.remove_red_eye_outlined,
+                size: 30,
+              ),
+              backgroundColor: Colors.blueGrey,
+              foregroundColor: Colors.white,
+              visible: true,
+              onTap: () async {
+                _chooseModel(_modelIndex, _account, _classifier, _image);
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -662,7 +659,9 @@ class _HomeViewState extends State<HomeView> {
     });
 
     try {
-      _pickedFile = (await _picker.pickImage(source: source))!;
+      _pickedFile = (await _picker.pickImage(
+        source: source,
+      ))!;
     } catch (e) {
       setState(() {
         _pickImageError = e;
@@ -836,7 +835,14 @@ class _HomeViewState extends State<HomeView> {
                         fontWeight: FontWeight.bold),
                   ),
                   onPressed: () async {
-                    Navigator.of(context).pop();
+                    setState(() {
+                      _image = null;
+                      _path = null;
+                      _recognitionList = [];
+                      _sizeImagePicked = null;
+                      _imageInput = null;
+                      Navigator.of(context).pop();
+                    });
                   },
                 ),
               ),
@@ -845,8 +851,12 @@ class _HomeViewState extends State<HomeView> {
         });
 
     if (!mounted) return;
-
     setState(() {
+      _image = null;
+      _path = null;
+      _recognitionList = [];
+      _sizeImagePicked = null;
+      _imageInput = null;
       _modelIndex = modelIndexReturn;
       print('day la index return: $modelIndexReturn');
       // Navigator.pushReplacement(

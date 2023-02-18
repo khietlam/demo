@@ -158,7 +158,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Padding(
                           padding: EdgeInsets.only(
                             left: 0.015.sh,
-                            top: 0.04.sh,
+                            top: 0.08.sh,
                           ),
                           child: CustomBackButton(),
                         ),
@@ -242,7 +242,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         : kerrorStyleIPAD,
                                     icon: Padding(
                                       padding: EdgeInsets.fromLTRB(0,
-                                          ScreenUtil().setHeight(45.0), 0, 0),
+                                          ScreenUtil().setHeight(25.0), 0, 0),
                                       child: Icon(
                                         CustomIcons.envelope,
                                         color: Colors.white70,
@@ -313,7 +313,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         : kerrorStyleIPAD,
                                     icon: Padding(
                                       padding: EdgeInsets.fromLTRB(0,
-                                          ScreenUtil().setHeight(45.0), 0, 0),
+                                          ScreenUtil().setHeight(25.0), 0, 0),
                                       child: Icon(
                                         CustomIcons.lock,
                                         color: Colors.white70,
@@ -351,42 +351,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               if (_isOffline) {
                                 _showErrorNetwork();
                               } else {
-                                try {
-                                  _account = (await AuthenticationService
-                                      .signUpUsingEmailPassword(
-                                    email: _account.username,
-                                    password: _account.password,
-                                  ))!;
+                                _account = (await AuthenticationService
+                                    .signUpUsingEmailPassword(
+                                  email: _account.username,
+                                  password: _account.password,
+                                ))!;
 
-                                  // print(_account.user);
-                                  if (_account.user!.uid != null) {
-                                    setState(() {
-                                      _showSpinner = false;
-                                      Future.delayed(const Duration(seconds: 0))
-                                          .then((value) {
-                                        Navigator.of(context).pushReplacement(
-                                          MaterialPageRoute(
-                                            builder: (context) => Home(
-                                              account: _account,
-                                            ),
+                                // print(_account.user);
+                                if (_account.user != null) {
+                                  setState(() {
+                                    _showSpinner = false;
+                                    Future.delayed(const Duration(seconds: 0))
+                                        .then((value) {
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                          builder: (context) => Home(
+                                            account: _account,
                                           ),
-                                        );
-                                      });
+                                        ),
+                                      );
                                     });
+                                  });
+                                } else {
+                                  // print('check phat: ${_account.user}');
+                                  setState(() {
+                                    _showSpinner = false;
+                                  });
+                                  if (_account.message == 'weak-password') {
+                                    _showErrorMessage(
+                                        'Your password is too weak, try to think a new one');
+                                  } else if (_account.message ==
+                                      'email-already-in-use') {
+                                    _showErrorMessage(
+                                        'An account with this email already exists. Please use another.');
+                                  } else {
+                                    _showErrorMessage(_account.message);
                                   }
-                                } on FirebaseAuthException catch (e) {
-                                  // print(e.message);
-                                  _showErrorMessage(e.message!);
-                                  setState(() {
-                                    _showSpinner = false;
-                                  });
-                                  throw e;
-                                } on Error catch (e) {
-                                  print(e);
-                                  _showErrorMessage(e.toString());
-                                  setState(() {
-                                    _showSpinner = false;
-                                  });
                                 }
                               }
                             } else {
