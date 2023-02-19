@@ -10,6 +10,7 @@ import 'package:camera/camera.dart';
 import 'package:demo/data/model_and_label.dart';
 import 'package:demo/screens/home_screen.dart';
 import 'package:demo/screens/info_screen.dart';
+import 'package:demo/screens/welcome_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:demo/constraints.dart';
@@ -21,6 +22,7 @@ import 'package:demo/services/account_info.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:images_picker/images_picker.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -137,6 +139,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   int _modelIndex = 0;
   dynamic _pickImageError;
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -219,20 +224,89 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Are you sure?'),
-            content: const Text('Do you want to logout Abody app?'),
+            content: const Text('Do you want to logout Demo app?'),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
                 child: const Text('No'),
               ),
               TextButton(
-                onPressed: () => {},
+                onPressed: () => logOut(),
                 child: const Text('Yes'),
               ),
             ],
           ),
         )) ??
         false;
+  }
+
+  void _showSuccess() {
+    Fluttertoast.showToast(
+      msg: "Logged out successfully!",
+      toastLength: Toast.LENGTH_SHORT,
+      backgroundColor: Colors.green.shade400,
+      textColor: Colors.white,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 2,
+      webPosition: "center",
+      webBgColor: "linear-gradient(to right, #ff7f00, #ff7f00)",
+      webShowClose: true,
+    );
+  }
+
+  Future<void> signOutFromGoogle() async {
+    await _googleSignIn.signOut();
+    print('xong GG');
+  }
+
+  void _showErrorMessage(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_LONG,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 2,
+      webPosition: "center",
+      webBgColor: "linear-gradient(to right, #ff7f00, #ff7f00)",
+      webShowClose: true,
+    );
+  }
+
+  void logOut() {
+    setState(() {
+      _showSpinner = true;
+    });
+
+    try {
+      if (_account.user!.uid != null) {
+        FirebaseAuth.instance.signOut();
+        print('xong Firebase');
+      }
+
+      if (_account.googleSignIn != null) {
+        signOutFromGoogle();
+      }
+
+      _showSuccess();
+
+      Future.delayed(const Duration(seconds: 1)).then((value) {
+        _showSpinner = false;
+        Navigator.pushReplacement(context, FadeRoute(page: WelcomeScreen()));
+      });
+    } on FirebaseAuthException catch (e) {
+      // print(e.message);
+      _showErrorMessage(e.message!);
+      setState(() {
+        _showSpinner = false;
+      });
+      throw e;
+    } on Error catch (e) {
+      print(e);
+      setState(() {
+        _showSpinner = false;
+      });
+    }
   }
 
   @override

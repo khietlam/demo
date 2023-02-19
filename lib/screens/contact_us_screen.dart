@@ -81,7 +81,8 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(left: 10.0, top: 30.0),
+                padding:  EdgeInsets.only(left: 0.015.sh,
+                  top: 0.08.sh,),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

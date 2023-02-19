@@ -64,6 +64,7 @@ dependencies:
   webview_flutter: ^4.0.2
   google_sign_in: ^5.4.4
   photo_view: ^0.14.0
+  flutter_plugin_android_lifecycle: ^2.0.2
 
   # Firebase services
   firebase_core: ^2.5.0

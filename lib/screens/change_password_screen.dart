@@ -195,7 +195,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         Padding(
                           padding: EdgeInsets.only(
                             left: 0.015.sh,
-                            top: 0.04.sh,
+                            top: 0.08.sh,
                           ),
                           child: CustomBackButton(),
                         ),

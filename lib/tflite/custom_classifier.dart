@@ -7,7 +7,7 @@ import 'package:image/image.dart' as imageLib;
 import 'package:demo/tflite/recognition.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
-
+//
 import 'stats.dart';
 
 /// Classifier
@@ -74,48 +74,53 @@ class Classifier {
         myOptions.addDelegate(gpuDelegateV2);
       }*/
 
-      if ( Platform.isIOS) {
-        //iOS Metal Delegate (GpuDelegate)
+      _interpreter = interpreter ??
+          await Interpreter.fromAsset(
+            "models/$fileModelName",
+            options: InterpreterOptions()..threads = numThreads, //myOptions,
+          );
 
-        // final gpuDelegate = GpuDelegate(
-        //     options: GpuDelegateOptions(allowPrecisionLoss: true, waitType: TFLGpuDelegateWaitType.active));
-        // var interpreterOptions = InterpreterOptions()..addDelegate(gpuDelegate);
-
-        _interpreter = interpreter ??
-            await Interpreter.fromAsset(
-              "models/$fileModelName",
-              options: InterpreterOptions()..threads = numThreads, //myOptions,
-            );
-
-      } else if (Platform.isAndroid) {
-        //Android GpuDelegateV2
-
-        final gpuDelegateV2 = GpuDelegateV2(
-            options: GpuDelegateOptionsV2(
-              isPrecisionLossAllowed: false,
-              inferencePreference: TfLiteGpuInferenceUsage.fastSingleAnswer,
-              inferencePriority1: TfLiteGpuInferencePriority.minLatency,
-              inferencePriority2: TfLiteGpuInferencePriority.auto,
-              inferencePriority3: TfLiteGpuInferencePriority.auto,
-            ));
-
-
-
-        var interpreterOptions = InterpreterOptions()..addDelegate(gpuDelegateV2);
-
-        // var interpreterOptions = InterpreterOptions()..useNnApiForAndroid = true;
-        // var interpreterOptions = InterpreterOptions()..addDelegate(NnApiDelegate());
-
-
-        _interpreter = interpreter ??
-            await Interpreter.fromAsset(
-              "models/$fileModelName",
-              options: interpreterOptions, //myOptions,
-            );
-
-
-
-      }
+      // if ( Platform.isIOS) {
+      //   //iOS Metal Delegate (GpuDelegate)
+      //   // final gpuDelegate = GpuDelegate(
+      //   //     options: GpuDelegateOptions(allowPrecisionLoss: true, waitType: TFLGpuDelegateWaitType.active));
+      //   // var interpreterOptions = InterpreterOptions()..addDelegate(gpuDelegate);
+      //
+      //   _interpreter = interpreter ??
+      //       await Interpreter.fromAsset(
+      //         "models/$fileModelName",
+      //         options: InterpreterOptions()..threads = numThreads, //myOptions,
+      //       );
+      //
+      // } else if (Platform.isAndroid) {
+      //   //Android GpuDelegateV2
+      //   final gpuDelegateV2 = GpuDelegateV2(
+      //       options: GpuDelegateOptionsV2(
+      //         isPrecisionLossAllowed:true,
+      //         inferencePreference:TfLiteGpuInferenceUsage.preferenceSustainSpeed,
+      //         inferencePriority1:TfLiteGpuInferencePriority.minMemoryUsage,
+      //         inferencePriority2:TfLiteGpuInferencePriority.auto,
+      //         inferencePriority3:TfLiteGpuInferencePriority.auto,
+      //       )
+      //   );
+      //
+      //   // var interpreterOptions = InterpreterOptions()..addDelegate(gpuDelegateV2);
+      //   // var interpreterOptions = InterpreterOptions()..useNnApiForAndroid = true;
+      //
+      //
+      //   // _interpreter = interpreter ??
+      //   //     await Interpreter.fromAsset(
+      //   //       "models/$fileModelName",
+      //   //       options: interpreterOptions, //myOptions,
+      //   //     );
+      //
+      //   _interpreter = interpreter ??
+      //       await Interpreter.fromAsset(
+      //         "models/$fileModelName",
+      //         options: InterpreterOptions()..threads = numThreads, //myOptions,
+      //       );
+      //
+      // }
 
 
       var outputTensors = _interpreter!.getOutputTensors();
@@ -399,3 +404,6 @@ class Classifier {
     _interpreter!.close();
   }
 }
+
+
+

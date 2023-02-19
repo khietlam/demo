@@ -116,6 +116,42 @@ class _InfoScreenState extends State<InfoScreen> {
     );
   }
 
+  void logOut() {
+    setState(() {
+      _showSpinner = true;
+    });
+
+    try {
+      if (_account.user!.uid != null) {
+        FirebaseAuth.instance.signOut();
+        print('xong Firebase');
+      }
+
+      if (_account.googleSignIn != null) {
+        signOutFromGoogle();
+      }
+
+      _showSuccess();
+
+      Future.delayed(const Duration(seconds: 1)).then((value) {
+        _showSpinner = false;
+        Navigator.pushReplacement(context, FadeRoute(page: WelcomeScreen()));
+      });
+    } on FirebaseAuthException catch (e) {
+      // print(e.message);
+      _showErrorMessage(e.message!);
+      setState(() {
+        _showSpinner = false;
+      });
+      throw e;
+    } on Error catch (e) {
+      print(e);
+      setState(() {
+        _showSpinner = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceType = 1.sh / 1.sw > 1.43 ? 'mobile' : 'tablet';
@@ -131,40 +167,7 @@ class _InfoScreenState extends State<InfoScreen> {
             actions: [
               IconButton(
                 onPressed: () async {
-                  setState(() {
-                    _showSpinner = true;
-                  });
-
-                  try {
-                    if (_account.user!.uid != null) {
-                      FirebaseAuth.instance.signOut();
-                      print('xong Firebase');
-                    }
-
-                    if (_account.googleSignIn != null) {
-                      signOutFromGoogle();
-                    }
-
-                    _showSuccess();
-
-                    Future.delayed(const Duration(seconds: 1)).then((value) {
-                      _showSpinner = false;
-                      Navigator.pushReplacement(
-                          context, FadeRoute(page: WelcomeScreen()));
-                    });
-                  } on FirebaseAuthException catch (e) {
-                    // print(e.message);
-                    _showErrorMessage(e.message!);
-                    setState(() {
-                      _showSpinner = false;
-                    });
-                    throw e;
-                  } on Error catch (e) {
-                    print(e);
-                    setState(() {
-                      _showSpinner = false;
-                    });
-                  }
+                  logOut();
                 },
                 icon: const Icon(Icons.exit_to_app_rounded),
               )
