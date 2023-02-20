@@ -1,10 +1,8 @@
 import 'dart:io';
 
 import 'package:demo/screens/home.dart';
-import 'package:demo/screens/home_screen.dart';
 import 'package:demo/services/account_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'package:demo/utils/firebase_auth_utils.dart';
@@ -18,7 +16,6 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../components/button.dart';
 import '../components/custom_back_button.dart';
 import '../components/custom_icons_icons.dart';
-import '../components/custom_route.dart';
 import '../constraints.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -31,7 +28,6 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   late FocusNode focusPassword, focusButton;
 
-  bool _isProcessing = false;
   bool _showSpinner = false;
   bool _isOffline = false;
   late Image imageMobile;
@@ -160,7 +156,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             left: 0.015.sh,
                             top: 0.08.sh,
                           ),
-                          child: CustomBackButton(),
+                          child: const CustomBackButton(),
                         ),
                         Flexible(
                           child: SizedBox(
@@ -501,76 +497,13 @@ class _SignInScreenState extends State<SignInScreen> {
       setState(() {
         _showSpinner = false;
       });
-      throw e;
+      rethrow;
     } on Error catch (e) {
-      print(e);
+      // print(e);
       setState(() {
         _showSpinner = false;
       });
     }
   }
 
-// void signInWithGoogle() async {
-//   _showSpinner = true;
-//
-//   try {
-//     final GoogleSignInAccount? googleSignInAccount =
-//         await googleSignIn.signIn();
-//     final GoogleSignInAuthentication? googleSignInAuthentication =
-//         await googleSignInAccount?.authentication;
-//     if (googleSignInAuthentication?.idToken != null) {
-//       account.token = googleSignInAuthentication?.idToken;
-//       if (mounted) {
-//         setState(() {
-//           _showSpinner = true;
-//         });
-//       }
-//       _screenLoading(context);
-//       var loginService = GoogleService();
-//       loginService.ggAccountInfo(account).then((value) {
-//         if (value?.status == 'fail') {
-//           _status = value?.status;
-//           account.error_code = value?.error_code;
-//           _showSpinner = false;
-//           showMessage('${value?.message}', Colors.red);
-//           widget.analytics?.logEvent(
-//             name: "login_fail",
-//             parameters: {
-//               "login_method": 'google_login',
-//               "error_code": value?.error_code,
-//             },
-//           );
-//         } else {
-//           _status = value?.status;
-//           account.username = value?.username;
-//           account.token = value?.token;
-//           account.expireTime = value?.expireTime;
-//           account.email = value?.email;
-//           account.height = value?.height;
-//           account.weight = value?.weight;
-//           account.primaryAvatarId = value?.primaryAvatarId;
-//           account.gender = value?.gender;
-//           account.birth_year = value?.birth_year;
-//           account.expireTimeOfToken =
-//               DateTime.now().millisecondsSinceEpoch + value?.expireTime;
-//           account.typeLogin = value?.typeLogin;
-//           account.lastScanId = value?.lastScanId;
-//           account.verify_valid_info = value?.verify_valid_info;
-//           _encryptToken(secure_token, account.token);
-//           // debugPrint('Token sau khi login ${account.token}');
-//           // debugPrint(
-//           //      'Expire Time sau khi login Google ${account.expireTimeOfToken}');
-//           // debugPrint(
-//           //      'verify_valid_info sau khi login Google ${account.verify_valid_info}');
-//           // debugPrint('Username ${account.username}');
-//           // debugPrint('Email ${account.email}');
-//
-//         }
-//       });
-//     }
-//   } catch (e) {
-//     // debugPrint('loi ne $e');
-//     _showSpinner = false;
-//   }
-// }
 }

@@ -7,19 +7,16 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
-import 'package:demo/components/custom_route.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_offline/flutter_offline.dart';
 
 import '../components/firebase_options.dart';
 import '../services/account_info.dart';
-import '../utils/firebase_auth_utils.dart';
 import 'home.dart';
 
-const String secure_token = "secure_token";
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -30,9 +27,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool isOffline = false;
   bool isReady = false;
-
-  String APP_STORE_URL = '';
-  String PLAY_STORE_URL = '';
 
   late String deviceType;
   late Image imageMobile;
@@ -57,11 +51,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<FirebaseApp> _initializeFirebase() async {
-
-
-    FirebaseApp firebaseApp = await Firebase.initializeApp( options: DefaultFirebaseOptions.currentPlatform,);
-
-
+    FirebaseApp firebaseApp = await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     account.user = FirebaseAuth.instance.currentUser;
 
     if (account.user != null) {
@@ -95,9 +87,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void dispose() {
     // TODO: implement dispose
-    // _controller.dispose();
-    // _chewieController.dispose();
-    // debugPrint('da dispose splash video');
     super.dispose();
   }
 

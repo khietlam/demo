@@ -1,13 +1,10 @@
 import 'dart:io';
 
 import 'package:demo/screens/home.dart';
-import 'package:demo/screens/home_screen.dart';
 import 'package:demo/services/account_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'package:demo/utils/firebase_auth_utils.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,7 +14,6 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../components/button.dart';
 import '../components/custom_back_button.dart';
 import '../components/custom_icons_icons.dart';
-import '../components/custom_route.dart';
 import '../constraints.dart';
 import '../tflite/custom_classifier.dart';
 
@@ -44,7 +40,6 @@ class ChangePasswordScreen extends StatefulWidget {
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   late FocusNode focusPassword, focusButton;
 
-  bool _isProcessing = false;
   bool _showSpinner = false;
   bool _isOffline = false;
   late Image imageMobile;
@@ -92,7 +87,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     // TODO: implement initState
     super.initState();
     _account = widget.account!;
-    print(_account.user);
+    // print(_account.user);
 
     focusPassword = FocusNode();
     focusButton = FocusNode();
@@ -320,9 +315,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                   },
                                   validationMessages: {
                                     ValidationMessage.required: (_) =>
-                                    'Password can\'t be empty',
+                                        'Password can\'t be empty',
                                     ValidationMessage.minLength: (_) =>
-                                    'Enter a password with length at least 6',
+                                        'Enter a password with length at least 6',
                                   },
                                   textInputAction: Platform.isIOS
                                       ? TextInputAction.next
@@ -387,9 +382,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               _account.newPassword =
                                   formOut['newPassword'].replaceAll(' ', '');
 
-                              print(_account.user!.email);
-                              print(_account.password);
-                              print(_account.newPassword);
+                              // print(_account.user!.email);
+                              // print(_account.password);
+                              // print(_account.newPassword);
 
                               if (_isOffline) {
                                 _showErrorNetwork();
@@ -426,10 +421,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     setState(() {
                                       _showSpinner = false;
                                     });
-                                    print(user);
+                                    // print(user);
                                   }).catchError((error) {
                                     _showErrorMessage(error.toString());
-                                    print(error);
+                                    // print(error);
                                     setState(() {
                                       _showSpinner = false;
                                     });
@@ -437,7 +432,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 }).catchError((err) {
                                   _showErrorMessage(err.toString());
 
-                                  print(err);
+                                  // print(err);
                                   setState(() {
                                     _showSpinner = false;
                                   });
@@ -458,33 +453,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             height: ScreenUtil().setHeight(380),
                           ),
                         ),
-//                Column(
-//                  children: <Widget>[
-//                    Text('- or sign in with -',
-//                        style: TextStyle(
-//                          fontFamily: 'Inter',
-//                          fontSize: ScreenUtil()
-//                              .setSp(49.0 * rateWidthNewIOSDevices),
-//                          color: Colors.white,
-//                          letterSpacing: ScreenUtil()
-//                              .setSp(3.0 * rateWidthNewIOSDevices),
-//                        )),
-//                    SizedBox(
-//                      height: ScreenUtil().setHeight(90),
-//                    ),
-//                    Row(
-//                      mainAxisSize: MainAxisSize.min,
-//                      mainAxisAlignment: MainAxisAlignment.center,
-//                      children: <Widget>[
-//                        _signInGoogleButton(),
-//                        SizedBox(
-//                          width: ScreenUtil().setHeight(30),
-//                        ),
-//                        _signInFBButton(),
-//                      ],
-//                    ),
-//                  ],
-//                ),
                       ],
                     );
                   },

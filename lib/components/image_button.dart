@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ImageButton extends StatelessWidget {
-  ImageButton({
+  const ImageButton({super.key,
     required this.imagePath,
     required this.onPress,
     required this.size,

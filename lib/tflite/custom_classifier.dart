@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 import 'package:collection/collection.dart';
@@ -7,6 +6,7 @@ import 'package:image/image.dart' as imageLib;
 import 'package:demo/tflite/recognition.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
+
 //
 import 'stats.dart';
 
@@ -17,8 +17,6 @@ class Classifier {
 
   //Interpreter Options (Settings)
   final int numThreads = 4;
-  final bool isNNAPI = false;
-  final bool isGPU = true;
 
   /// Labels file loaded as list
   List<String>? _labels;
@@ -27,7 +25,7 @@ class Classifier {
 
   static String? fileLabelName;
 
-  /// Get input size of image (height = width = 300)
+  /// Get input size of image
   List<int>? _inputShape;
 
   /// Non-maximum suppression threshold
@@ -45,7 +43,7 @@ class Classifier {
   /// Types of output tensors
   List<TfLiteType>? _outputTypes;
 
-  static const int clsNum = 4;
+  static const int classNum = 4;
   static const double objectConfTh = 0.6;
   static const double classConfTh = 0.6;
 
@@ -57,23 +55,6 @@ class Classifier {
   /// Loads interpreter from asset
   void loadModel({Interpreter? interpreter}) async {
     try {
-      //Still working on it
-      /*InterpreterOptions myOptions = new InterpreterOptions();
-      myOptions.threads = numThreads;
-      if (isNNAPI) {
-        NnApiDelegate nnApiDelegate;
-        bool androidApiThresholdMet = true;
-        if (androidApiThresholdMet) {
-          nnApiDelegate = new NnApiDelegate();
-          myOptions.addDelegate(nnApiDelegate);
-          myOptions.useNnApiForAndroid = true;
-        }
-      }
-      if (isGPU) {
-        GpuDelegateV2 gpuDelegateV2 = new GpuDelegateV2();
-        myOptions.addDelegate(gpuDelegateV2);
-      }*/
-
       _interpreter = interpreter ??
           await Interpreter.fromAsset(
             "models/$fileModelName",
@@ -122,7 +103,6 @@ class Classifier {
       //
       // }
 
-
       var outputTensors = _interpreter!.getOutputTensors();
       //print("the length of the output Tensors is ${outputTensors.length}");
       _outputShapes = [];
@@ -134,9 +114,9 @@ class Classifier {
 
       print(_interpreter!.getInputTensor(0));
       print(_interpreter!.getOutputTensor(0));
-      print(outputTensors[0].params);
-      print(outputTensors[0].shape);
-      print(outputTensors[0].type);
+      // print(outputTensors[0].params);
+      // print(outputTensors[0].shape);
+      // print(outputTensors[0].type);
 
       _inputShape = _interpreter!.getInputTensor(0).shape;
     } catch (e) {
@@ -187,9 +167,6 @@ class Classifier {
     // Do not use static methods, fromImage(Image) or fromFile(File),
     // of TensorImage unless the desired input TfLiteDataType is Uint8.
 
-    // Create TensorImage from image
-    //TensorImage inputImage = TensorImage.fromImage(image);
-
     // Pre-process TensorImage
     inputImage = getProcessedImage(inputImage);
 
@@ -227,56 +204,33 @@ class Classifier {
     var inferenceTimeElapsed =
         DateTime.now().millisecondsSinceEpoch - inferenceTimeStart;
 
-    // bool isLandScapeImage;
-
-    // if (image.width > image.height) {
-    //   print('landscape image');
-    //   isLandScapeImage = true;
-    // } else if (image.width < image.height) {
-    //   print('portrait image');
-    //   isLandScapeImage = false;
-    // }
-
-    // var smallHeight = deviceSize.width / (image.width / image.height);
-    // var minTop =
-    //     (deviceSize.width - smallHeight) / 2;
-    // print('check minTop: $minTop');
-    // var maxTop = smallHeight + ((deviceSize.width - smallHeight));
-    // print('check maxTop: $maxTop');
-    // var smallWidth = deviceSize.width / (image.height / image.width);
-    // var minLeft =
-    //     (deviceSize.width - smallWidth) / 2;
-    // print('check minLeft: $minLeft');
-    //
-    // var maxLeft = smallWidth + ((deviceSize.width - smallWidth) / 2);
-    // print('check maxLeft: $maxLeft');
-
     /// make recognition
     final recognitions = <Recognition>[];
     List<double> results = outputLocations.getDoubleList();
-    print('check result: ${results.length}');
-    print('check result: ${results[0]}');
+    // print('check result: ${results.length}');
+    // print('check result: ${results[0]}');
 
     List label0 = [];
     List label1 = [];
     List label2 = [];
     List label3 = [];
 
-    for (var i = 0; i < results.length; i += (5 + clsNum)) {
+    for (var i = 0; i < results.length; i += (5 + classNum)) {
       // check obj conf
       if (results[i + 4] < objectConfTh || results[i + 4] > 1) continue;
 
       /// check cls conf
       // double maxClsConf = results[i + 5];
       double maxClsConf =
-          results.sublist(i + 5, i + 5 + clsNum - 1).reduce(max);
+          results.sublist(i + 5, i + 5 + classNum - 1).reduce(max);
       // print('check maxClsConf:$maxClsConf');
       if (maxClsConf < classConfTh || maxClsConf > 1) continue;
 
       /// add detects
       // int cls = 0;
-      int cls = results.sublist(i + 5, i + 5 + clsNum - 1).indexOf(maxClsConf) %
-          clsNum;
+      int cls =
+          results.sublist(i + 5, i + 5 + classNum - 1).indexOf(maxClsConf) %
+              classNum;
       // print('------------check cls:----------- $cls');
 
       if (cls == 0) label0.add(cls);
@@ -301,13 +255,6 @@ class Classifier {
             .add(Recognition(i, cls.toString(), maxClsConf, transformRect));
       }
     }
-    // return recognitions;
-
-    print('day la label0 ${label0.length}');
-    print('day la label1 ${label1.length}');
-    print('day la label2 ${label2.length}');
-    print('day la label3 ${label3.length}');
-    print('check zin: ${recognitions.length}');
 
     // End of for loop and added all recognitions
     List<Recognition> recognitionsNMS = nms(recognitions);
@@ -404,6 +351,3 @@ class Classifier {
     _interpreter!.close();
   }
 }
-
-
-

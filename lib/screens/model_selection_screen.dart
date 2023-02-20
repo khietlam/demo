@@ -1,18 +1,14 @@
 import 'dart:io';
 
 import 'package:auto_animated/auto_animated.dart';
-import 'package:demo/screens/home_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../components/custom_icons_icons.dart';
-import '../components/custom_route.dart';
-import '../components/utils.dart';
+import '../utils/utils.dart';
 import '../data/model_and_label.dart';
 import '../services/account_info.dart';
 import '../tflite/custom_classifier.dart';
-import 'home.dart';
 
 class ModelSelectionScreen extends StatefulWidget {
   ModelSelectionScreen(
@@ -81,21 +77,9 @@ class _ModelSelectionScreenState extends State<ModelSelectionScreen> {
       onTap: () async {
         setState(() {
           _checkedIndex = index;
-          print(index);
+          // print(index);
           Navigator.pop(context, _checkedIndex);
 
-          // Future.delayed(const Duration(seconds: 0)).then((value) {
-          //         Navigator.pushReplacement(
-          //             context,
-          //             FadeRoute(
-          //               page: Home(
-          //                 account: _account,
-          //                 classifier: _classifier,
-          //                 image: _image,
-          //                 modelIndex: _checkedIndex,
-          //               ),
-          //             ));
-          //       });
         });
       },
       child: Stack(

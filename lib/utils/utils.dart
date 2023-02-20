@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HorizontalItem extends StatelessWidget {
   HorizontalItem(
-      {required this.title, required this.onTap, required this.isTrue});
+      {super.key, required this.title, required this.onTap, required this.isTrue});
 
   String title;
   FocusNode? focus;

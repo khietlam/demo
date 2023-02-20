@@ -1,10 +1,8 @@
 import 'dart:io';
 
 import 'package:demo/screens/home.dart';
-import 'package:demo/screens/home_screen.dart';
 import 'package:demo/services/account_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'package:demo/utils/firebase_auth_utils.dart';
@@ -18,7 +16,6 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../components/button.dart';
 import '../components/custom_back_button.dart';
 import '../components/custom_icons_icons.dart';
-import '../components/custom_route.dart';
 import '../constraints.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -31,7 +28,6 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   late FocusNode focusPassword, focusButton;
 
-  bool _isProcessing = false;
   bool _showSpinner = false;
   bool _isOffline = false;
   late Image imageMobile;
@@ -160,7 +156,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             left: 0.015.sh,
                             top: 0.08.sh,
                           ),
-                          child: CustomBackButton(),
+                          child: const CustomBackButton(),
                         ),
                         Flexible(
                           child: SizedBox(
@@ -503,12 +499,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
       setState(() {
         _showSpinner = false;
       });
-      throw e;
+      rethrow;
     } on Error catch (e) {
-      print(e);
+      // print(e);
       setState(() {
         _showSpinner = false;
       });
     }
+    return null;
   }
 }

@@ -1,17 +1,10 @@
 import 'dart:async';
 
-import 'package:camera/camera.dart';
-import 'package:demo/screens/camera_screen.dart';
-import 'package:demo/screens/welcome_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:demo/tflite/recognition.dart';
 import 'package:demo/tflite/stats.dart';
@@ -27,22 +20,19 @@ import '../tflite/custom_classifier.dart';
 import 'package:demo/components/custom_dialog.dart' as customDialog;
 
 import 'dart:io';
-import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 import 'package:image/image.dart' as img;
-import 'dart:io' as Io;
 
 import 'home.dart';
 import 'model_selection_screen.dart';
 
-/// [HomeView] stacks [CameraView] and [BoxWidget]s with bottom sheet for stats
-class HomeView extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   String? title;
   File? image;
   Classifier? classifier;
   AccountInfo? account;
   int? modelIndex;
 
-  HomeView({
+  HomeScreen({
     super.key,
     this.title,
     this.image,
@@ -52,20 +42,16 @@ class HomeView extends StatefulWidget {
   });
 
   @override
-  _HomeViewState createState() => _HomeViewState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeScreenState extends State<HomeScreen> {
   /// Results to draw bounding boxes
   List<Recognition>? _results;
 
   /// Realtime stats
   Stats? _stats;
 
-  /// Scaffold Key
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-
-  // Test with image picker
   File? _image;
   String? _path;
   final _picker = ImagePicker();
@@ -78,16 +64,11 @@ class _HomeViewState extends State<HomeView> {
       Stats(totalPredictTime: 0, inferenceTime: 0, preProcessingTime: 0);
 
   Size? _sizeImagePicked;
-
   bool _isLandScapeImage = false;
-
   Size? _deviceSize;
-
   img.Image? _imageInput;
 
-  // List<CameraDescription> _cameras = <CameraDescription>[];
   bool _showSpinner = false;
-
   int _start = 0;
 
   var renderOverlay = true;
@@ -114,16 +95,6 @@ class _HomeViewState extends State<HomeView> {
     FloatingActionButtonLocation.endTop,
   ];
 
-  var _bottomNavIndex = 0; //default index of a first screen
-
-  late AnimationController _fabAnimationController;
-  late AnimationController _borderRadiusAnimationController;
-  late Animation<double> fabAnimation;
-  late Animation<double> borderRadiusAnimation;
-  late CurvedAnimation fabCurve;
-  late CurvedAnimation borderRadiusCurve;
-  late AnimationController _hideBottomBarAnimationController;
-
   String? _deviceType;
   AccountInfo _account = AccountInfo();
 
@@ -144,144 +115,7 @@ class _HomeViewState extends State<HomeView> {
       _classifier = widget.classifier;
     }
 
-    print(
-        'check model trang home detail: ${modelList.elementAt(_modelIndex).modelName}');
   }
-
-  // void getDataAndRun() {
-  //
-  //   if (widget.image != null) {
-  //     print('check thoa dieu kien');
-  //
-  //     setState(() {
-  //       _image = widget.image;
-  //       _classifier = widget.classifier;
-  //       _getImage();
-  //     });
-  //   }
-  // }
-
-  // Future _getImage(ImageSource source) async {
-  //   setState(() {
-  //     _showSpinner = true;
-  //
-  //     _imageInput = img.decodeImage(_image!.readAsBytesSync())!;
-  //
-  //
-  //     _sizeImagePicked =
-  //         Size(_imageInput!.width.toDouble(), _imageInput!.height.toDouble());
-  //
-  //     if (_imageInput!.width > _imageInput!.height) {
-  //       setState(() {
-  //         _isLandScapeImage = true;
-  //       });
-  //     } else if (_imageInput!.width < _imageInput!.height) {
-  //       print('portrait image');
-  //       setState(() {
-  //         _isLandScapeImage = false;
-  //       });
-  //     }
-  //
-  //     _predict(_imageInput!);
-  //   });
-  //
-  //   // setState(() {
-  //   //   _image = null;
-  //   //   recognitionList = [];
-  //   //   sizeImagePicked = null;
-  //   //   imageInput = null;
-  //   // });
-  //
-  //   // pickedFile = (await picker.pickImage(source: source))!;
-  //   //
-  //   // if (pickedFile != null) {
-  //   //   setState(() {
-  //   //     showSpinner = true;
-  //   //     _image = File(pickedFile.path);
-  //   //     print(pickedFile.path);
-  //   //
-  //   //     imageInput = img.decodeImage(_image!.readAsBytesSync())!;
-  //   //
-  //   //     print('kich thuoc anh raw-width: ${imageInput!.width}');
-  //   //     print('kich thuoc anh raw-height: ${imageInput!.height}');
-  //   //     print('check deviceSize: $deviceSize');
-  //   //
-  //   //     sizeImagePicked =
-  //   //         Size(imageInput!.width.toDouble(), imageInput!.height.toDouble());
-  //   //
-  //   //     if (imageInput!.width > imageInput!.height) {
-  //   //       setState(() {
-  //   //         isLandScapeImage = true;
-  //   //       });
-  //   //     } else if (imageInput!.width < imageInput!.height) {
-  //   //       print('portrait image');
-  //   //       setState(() {
-  //   //         isLandScapeImage = false;
-  //   //       });
-  //   //     }
-  //   //
-  //   //     _predict(imageInput!);
-  //   //   });
-  //   // }
-  // }
-
-  // Future _getImageNew() async {
-  //   setState(() {
-  //     _image = null;
-  //     _recognitionList = [];
-  //     _sizeImagePicked = null;
-  //     _imageInput = null;
-  //   });
-  //
-  //   List<Media>? res = await ImagesPicker.openCamera(
-  //     // pickType: PickType.video,
-  //     pickType: PickType.image,
-  //     quality: 1,
-  //     maxSize: 800,
-  //     // cropOpt: CropOption(
-  //     //   aspectRatio: CropAspectRatio.wh16x9,
-  //     // ),
-  //     maxTime: 15,
-  //   );
-  //   print(res);
-  //   if (res != null) {
-  //     print(res[0].path);
-  //     setState(() {
-  //       _path = res[0].thumbPath;
-  //     });
-  //   }
-  //
-  //   pickedFile = XFile(_path!);
-  //
-  //   if (pickedFile != null) {
-  //     setState(() {
-  //       showSpinner = true;
-  //       _image = File(pickedFile.path);
-  //       print(pickedFile.path);
-  //
-  //       imageInput = img.decodeImage(_image!.readAsBytesSync())!;
-  //
-  //       print('kich thuoc anh raw-width: ${imageInput!.width}');
-  //       print('kich thuoc anh raw-height: ${imageInput!.height}');
-  //
-  //       sizeImagePicked =
-  //           Size(imageInput!.width.toDouble(), imageInput!.height.toDouble());
-  //
-  //       if (imageInput!.width > imageInput!.height) {
-  //         setState(() {
-  //           isLandScapeImage = true;
-  //         });
-  //       } else if (imageInput!.width < imageInput!.height) {
-  //         print('portrait image');
-  //         setState(() {
-  //           isLandScapeImage = false;
-  //         });
-  //       }
-  //
-  //       _predict(imageInput!);
-  //     });
-  //   }
-  // }
 
   void _predict(img.Image inputImage) async {
     Map<String, dynamic>? result = _classifier?.predict(inputImage);
@@ -306,9 +140,9 @@ class _HomeViewState extends State<HomeView> {
             _recognitionList = result!['recognitions'];
             _displayStats = result['stats'];
 
-            print('-----------------check----------------:$_recognitionList');
-            print(
-                '-----------------length----------------:${_recognitionList.length}');
+            // print('-----------------check----------------:$_recognitionList');
+            // print(
+            //     '-----------------length----------------:${_recognitionList.length}');
           });
         }
       }
@@ -333,14 +167,14 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  /// Callback to get inference results from [CameraView]
+  /// Callback to get inference results
   void resultsCallback(List<Recognition> results) {
     setState(() {
       _results = results;
     });
   }
 
-  /// Callback to get inference stats from [CameraView]
+  /// Callback to get inference stats
   void statsCallback(Stats stats) {
     setState(() {
       _stats = stats;
@@ -350,8 +184,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void dispose() {
     // TODO: implement dispose
-    // _classifier!.close();
-    print('da dispose trang Home Screen');
+    // print('da dispose trang Home Screen');
     super.dispose();
   }
 
@@ -374,29 +207,12 @@ class _HomeViewState extends State<HomeView> {
     _deviceType = 1.sh / 1.sw > 1.43 ? 'mobile' : 'tablet';
     _deviceSize = MediaQuery.of(context).size;
 
-    // print('check device w: ${deviceSize!.width}');
-    // print('check device h: ${deviceSize!.height}');
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: HexColor('#B28B4B').withOpacity(0.9),
         leading: Container(),
         actions: [
           Container(),
-          // IconButton(
-          //   onPressed: () async {
-          //     setState(() {
-          //       _showSpinner = true;
-          //     });
-          //     await FirebaseAuth.instance.signOut();
-          //     Future.delayed(const Duration(seconds: 0)).then((value) {
-          //       _showSpinner = false;
-          //       Navigator.pushReplacement(
-          //           context, FadeRoute(page: WelcomeScreen()));
-          //     });
-          //   },
-          //   icon: const Icon(Icons.exit_to_app_rounded),
-          // )
         ],
         title: Text(widget.title!),
       ),
@@ -412,8 +228,7 @@ class _HomeViewState extends State<HomeView> {
           children: <Widget>[
             InteractiveViewer(
               panEnabled: true,
-              // Set it to false
-              boundaryMargin: EdgeInsets.all(100),
+              boundaryMargin: const EdgeInsets.all(100),
               minScale: 0.5,
               maxScale: 8,
               child: Container(
@@ -478,28 +293,9 @@ class _HomeViewState extends State<HomeView> {
                         : '',
                     style: const TextStyle(fontSize: 16),
                   ),
-                  // Text(
-                  //   recognitionList.isNotEmpty
-                  //       ? 'Inference Time: ${displayStats.inferenceTime} ms'
-                  //       : '',
-                  //   style: TextStyle(fontSize: 16),
-                  // ),
-                  // Text(
-                  //   recognitionList.isNotEmpty
-                  //       ? 'PreProcessing Time: ${displayStats.preProcessingTime} ms'
-                  //       : '',
-                  //   style: TextStyle(fontSize: 16),
-                  // ),
                 ],
               ),
             )
-            // Text(
-            //   category != null ? category!.label : '',
-            //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-            // ),
-            // SizedBox(
-            //   height: 8,
-            // ),
           ],
         ),
       ),
@@ -671,10 +467,10 @@ class _HomeViewState extends State<HomeView> {
     if (_pickedFile != null) {
       _showProcessing();
       _image = File(_pickedFile!.path);
-      print(_pickedFile!.path);
+      // print(_pickedFile!.path);
 
       if (_image != null) {
-        print('check hang sau gallery');
+        // print('check hang sau gallery');
         setState(() {
           _showSpinner = true;
           _imageInput = img.decodeImage(_image!.readAsBytesSync())!;
@@ -687,7 +483,7 @@ class _HomeViewState extends State<HomeView> {
               _isLandScapeImage = true;
             });
           } else if (_imageInput!.width < _imageInput!.height) {
-            print('portrait image');
+            // print('portrait image');
             setState(() {
               _isLandScapeImage = false;
             });
@@ -697,40 +493,6 @@ class _HomeViewState extends State<HomeView> {
         });
       }
     }
-
-    // List<Media>? res = await ImagesPicker.pick(
-    //   count: 1,
-    //   pickType: PickType.image,
-    // );
-
-    // print(res);
-    // if (res != null) {
-    //   print(res[0].path);
-    //   _path = res[0].thumbPath;
-    //   _pickedFile = XFile(_path!);
-    //   _image = File(_pickedFile.path);
-    //
-    //   setState(() {
-    //     _showSpinner = true;
-    //     _imageInput = img.decodeImage(_image!.readAsBytesSync())!;
-    //
-    //     _sizeImagePicked =
-    //         Size(_imageInput!.width.toDouble(), _imageInput!.height.toDouble());
-    //
-    //     if (_imageInput!.width > _imageInput!.height) {
-    //       setState(() {
-    //         _isLandScapeImage = true;
-    //       });
-    //     } else if (_imageInput!.width < _imageInput!.height) {
-    //       print('portrait image');
-    //       setState(() {
-    //         _isLandScapeImage = false;
-    //       });
-    //     }
-    //
-    //     _predict(_imageInput!);
-    //   });
-    // }
   }
 
   Future _getImageFromCapture() async {
@@ -752,10 +514,10 @@ class _HomeViewState extends State<HomeView> {
       // ),
       maxTime: 15,
     );
-    print(res);
+    // print(res);
     if (res != null) {
       _showProcessing();
-      print(res[0].path);
+      // print(res[0].path);
       _path = res[0].thumbPath;
       _pickedFile = XFile(_path!);
       _image = File(_pickedFile!.path);
@@ -772,7 +534,7 @@ class _HomeViewState extends State<HomeView> {
             _isLandScapeImage = true;
           });
         } else if (_imageInput!.width < _imageInput!.height) {
-          print('portrait image');
+          // print('portrait image');
           setState(() {
             _isLandScapeImage = false;
           });
@@ -858,11 +620,7 @@ class _HomeViewState extends State<HomeView> {
       _sizeImagePicked = null;
       _imageInput = null;
       _modelIndex = modelIndexReturn;
-      print('day la index return: $modelIndexReturn');
-      // Navigator.pushReplacement(
-      //               context,
-      //               MaterialPageRoute(
-      //                   builder: (BuildContext context) => super.widget));
+      // print('day la index return: $modelIndexReturn');
 
       Future.delayed(const Duration(seconds: 0)).then((value) {
         Navigator.pushReplacement(
@@ -885,7 +643,7 @@ class StatsRow extends StatelessWidget {
   final String left;
   final String right;
 
-  StatsRow(this.left, this.right);
+  const StatsRow(this.left, this.right, {super.key});
 
   @override
   Widget build(BuildContext context) {

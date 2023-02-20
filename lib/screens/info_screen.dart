@@ -7,31 +7,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:io';
-import 'dart:convert';
-
-import 'package:demo/constraints.dart';
 
 import 'package:demo/components/custom_icons_icons.dart';
-import 'package:demo/components/button.dart';
 import 'package:demo/components/row_button.dart';
 import 'package:demo/components/custom_route.dart';
 
 import 'package:demo/services/account_info.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:flutter_offline/flutter_offline.dart';
-
 import '../tflite/custom_classifier.dart';
-import 'home.dart';
-
-const String secure_token = "secure_token";
 
 class InfoScreen extends StatefulWidget {
   InfoScreen({
@@ -49,28 +39,19 @@ class InfoScreen extends StatefulWidget {
   AccountInfo? account;
   int? modelIndex;
 
-  // final GoogleSignIn googleSignIn;
-  // final FacebookLogin facebookLogin;
-
   @override
   _InfoScreenState createState() => _InfoScreenState();
 }
 
 class _InfoScreenState extends State<InfoScreen> {
-  bool _isOffline = false;
-
   bool _showSpinner = false;
   AccountInfo _account = AccountInfo();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   void initState() {
     super.initState();
     _account = widget.account!;
-    print(_account.user);
-    print(_account.googleSignIn);
-
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
@@ -99,7 +80,7 @@ class _InfoScreenState extends State<InfoScreen> {
 
   Future<void> signOutFromGoogle() async {
     await _googleSignIn.signOut();
-    print('xong GG');
+    // print('xong GG');
   }
 
   void _showErrorMessage(String message) {
@@ -124,7 +105,7 @@ class _InfoScreenState extends State<InfoScreen> {
     try {
       if (_account.user!.uid != null) {
         FirebaseAuth.instance.signOut();
-        print('xong Firebase');
+        // print('xong Firebase');
       }
 
       if (_account.googleSignIn != null) {
@@ -143,9 +124,9 @@ class _InfoScreenState extends State<InfoScreen> {
       setState(() {
         _showSpinner = false;
       });
-      throw e;
+      rethrow;
     } on Error catch (e) {
-      print(e);
+      // print(e);
       setState(() {
         _showSpinner = false;
       });
@@ -227,7 +208,7 @@ class _InfoScreenState extends State<InfoScreen> {
                               .then((value) {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => AboutScreen(),
+                                builder: (context) => const AboutScreen(),
                               ),
                             );
                           });
@@ -247,7 +228,7 @@ class _InfoScreenState extends State<InfoScreen> {
                               .then((value) {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => ContactUsScreen(),
+                                builder: (context) => const ContactUsScreen(),
                               ),
                             );
                           });

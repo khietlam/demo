@@ -3,8 +3,8 @@ import 'package:demo/constraints.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RowButton extends StatelessWidget {
-  RowButton(
-      {required this.icon,
+  const RowButton(
+      {super.key, required this.icon,
       required this.title,
       required this.onTap,
       required this.iconSize,

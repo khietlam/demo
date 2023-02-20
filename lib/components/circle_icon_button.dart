@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CircleIconButton extends StatelessWidget {
-  CircleIconButton(
-      {required this.icon,
+  const CircleIconButton(
+      {super.key, required this.icon,
       required this.onPress,
       required this.size,
       required this.color});

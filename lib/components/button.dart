@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Button extends StatelessWidget {
-  Button(
-      {required this.onTap,
+  const Button(
+      {super.key, required this.onTap,
       required this.buttonName,
       required this.nameColor,
       required this.buttonColor,
