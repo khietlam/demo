@@ -1,6 +1,11 @@
 # demo
 
-A new Flutter project.
+Requirements:
+1.	The demo has a basic user sign up and login functions
+2.	The demo works on the count of pea (use Tensorflow Lite model)
+3.	Other functions that it would be useful for the app 
+
+See demo at Youtube: https://youtu.be/Jvh_Nkau01E
 
 ## Getting Started
 
